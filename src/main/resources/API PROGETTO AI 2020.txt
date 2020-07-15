@@ -1,0 +1,44 @@
+API REST PROGETTO AI 2020
+
+Studente: 
+
+/API/students (GET all students)
+/API/students/{studentId} (GET a student)
+/API/students (POST a new student) (nel momento in cui si fa la registrazione)
+/API/students/{id}/courses (GET all courses for student)
+/API/students/{id}/teams (GET all groups for student)
+
+/API/students/{id}/requests (GET all requests to join a group)
+/API/students/{id}/{courseId}/requests (GET all requests to join a group for a course)
+
+
+
+Corso: 
+
+/API/courses/ (GET all courses)
+/API/courses/{name} (GET a course)
+/API/courses/ (POST create a new course)
+/API/courses/{name}/enrolled (GET all enrolled students in a course)
+/API/courses/{name}/enrollOne (POST enroll a student in a course)
+/API/courses/{name}/enrollMany (POST enroll many students through CSV file)
+/API/courses/{name}/teams (GET all teams for a course)
+
+
+/API/courses/{name} (DELETE a course)
+/API/courses/{name} (PUT update a course)
+/API/courses/{name}/{studentId} (DELETE from enrolled students)
+/API/courses/{name}/teams/{teamId}/vMs (GET all vms for a course and a team)
+/API/courses/{name}/teams/{teamId} (PUT update limit for vms)
+/API/courses/{name}/tasks (GET all tasks for a course)
+/API/courses/{name}/tasks/{taskId}/assays (GET all elaborati for a task)
+/API/courses/{name}/tasks (POST create a new task)
+/API/courses/{name}/tasks/{taskId}/assays/{assayId} (GET a specific elaborato)
+/API/courses/{name}/tasks/{taskId}/assays/{assayId} (POST load new version of elaborato)
+
+
+Gruppo: 
+/API/students/{id}/teams/{name}/vMs (GET all vms for a course and a student)
+/API/students/{id}/teams/{name}/vMs (POST new VM for a course and a student)
+/API/students/{id}/teams/{name}/vMs/{vMId} (POST with new status: accensione, spegnimento, cancellazione)
+
+

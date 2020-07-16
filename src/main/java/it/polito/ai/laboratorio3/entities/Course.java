@@ -23,9 +23,6 @@ public class Course {
 
     //Progetto
     @OneToMany(mappedBy = "course")
-    private List<Vm> vms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "course")
     private List<Task> tasks = new ArrayList<>();
 
     public void addStudent(Student student){

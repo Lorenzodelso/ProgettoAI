@@ -19,9 +19,7 @@ public class Vm {
     private stati status;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private Course course;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Team team;
+    //il corso lo prende dal team
 
 }

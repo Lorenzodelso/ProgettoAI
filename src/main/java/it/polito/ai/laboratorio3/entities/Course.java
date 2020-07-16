@@ -21,6 +21,13 @@ public class Course {
     @OneToMany(mappedBy = "course")
     private List<Team> teams = new ArrayList<>();
 
+    //Progetto
+    @OneToMany(mappedBy = "course")
+    private List<Vm> vms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<Task> tasks = new ArrayList<>();
+
     public void addStudent(Student student){
         students.add(student);
         student.getCourses().add(this);

@@ -24,6 +24,20 @@ public class Team {
     @JoinTable(name = "team_student", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> members = new ArrayList<>();
 
+    //PROGETTO
+    private int vcpuTot;
+    private int GBDiskTot;
+    private int GBRamTot;
+    private int vcpuUsati;
+    private int GBDiskUsati;
+    private int GBRamUsati;
+
+    @OneToMany(mappedBy = "team")
+    private List<Vm> vms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team")
+    private List<Essay> essays = new ArrayList<>();
+
     public void setCourse(Course course){
         if (course == null){
             this.course.getTeams().remove(this);

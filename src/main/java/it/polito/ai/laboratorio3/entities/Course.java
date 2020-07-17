@@ -3,6 +3,7 @@ package it.polito.ai.laboratorio3.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class Course {
     @ManyToMany(mappedBy = "courses")
     private List<Student> students = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "courses")
+    private List<Docente> docenti = new ArrayList<>();
+
     @OneToMany(mappedBy = "course")
     private List<Team> teams = new ArrayList<>();
 
@@ -28,6 +32,11 @@ public class Course {
     public void addStudent(Student student){
         students.add(student);
         student.getCourses().add(this);
+    }
+
+    public void addDocente (Docente docente){
+        docenti.add(docente);
+        docente.getCourses().add(this);
     }
 
     public void addTeam(Team team){

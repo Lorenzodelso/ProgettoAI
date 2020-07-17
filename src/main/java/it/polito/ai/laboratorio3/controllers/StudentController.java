@@ -3,6 +3,7 @@ package it.polito.ai.laboratorio3.controllers;
 import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
+import it.polito.ai.laboratorio3.dtos.TokenDTO;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,5 +57,9 @@ public class StudentController {
         return teamDTOS;
     }
 
-
+    @GetMapping("/{id}/courses/{name}/requests")
+    public List<TokenDTO> getRequests (@PathVariable String id, @PathVariable String name){
+        List<TokenDTO> tokens = teamService.getRequestsForStudent(id, name);
+        return tokens;
+    }
 }

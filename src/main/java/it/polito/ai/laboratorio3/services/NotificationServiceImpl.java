@@ -1,9 +1,11 @@
 package it.polito.ai.laboratorio3.services;
 
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
+import it.polito.ai.laboratorio3.entities.Student;
 import it.polito.ai.laboratorio3.entities.Token;
 import it.polito.ai.laboratorio3.exceptions.TokenExpiredException;
 import it.polito.ai.laboratorio3.exceptions.TokenNotFoundException;
+import it.polito.ai.laboratorio3.repositories.StudentRepository;
 import it.polito.ai.laboratorio3.repositories.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +38,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     TokenRepository tokenRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
 
     @Autowired
     TeamService teamService;
@@ -90,7 +95,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyTeam(TeamDTO dto, List<String> memberIds) {
+
+        String courseName = teamService.getCourseNameByTeamId(dto.getId());
+
         for (String s : memberIds) {
+            Optional<Student> studentOpt = studentRepository.findById(s);
+            if (!studentOpt.isPresent())
+                throw new RuntimeException();
+            Student student = studentOpt.get();
+
             String tokendId = UUID.randomUUID().toString();
             Long teamId = dto.getId();
             Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(1));
@@ -98,6 +111,9 @@ public class NotificationServiceImpl implements NotificationService {
             token.setId(tokendId);
             token.setTeamId(teamId);
             token.setExpiryDate(expiryDate);
+            token.setCourseName(courseName);
+            token.setStudent(student);
+
 
             tokenRepository.save(token);
 

@@ -4,11 +4,14 @@ import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
 import it.polito.ai.laboratorio3.exceptions.CourseNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.DocenteHasNotPrivilegeException;
 import it.polito.ai.laboratorio3.services.NotificationService;
 import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -56,8 +60,17 @@ public class CourseController {
     }
 
     @PostMapping({"","/"})
-    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO){
-        if(teamService.addCourse(courseDTO))
+    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String,Object> data){
+
+        List<String> ids = new ArrayList<>();
+
+        if(data.containsKey("docids"))
+            ids = (List<String>) data.get("docids");
+
+        if(!ids.contains( userDetails.getUsername()))
+            ids.add(userDetails.getUsername());
+
+        if(teamService.addCourse(courseDTO, ids))
             return enrich(courseDTO);
         else throw new ResponseStatusException(HttpStatus.CONFLICT,courseDTO.getName());
     }
@@ -126,5 +139,18 @@ public class CourseController {
         List<StudentDTO> studentDTOS = teamService.getStudentsInTeams(name);
         studentDTOS.forEach(ModelHelper::enrich);
         return studentDTOS;
+    }
+
+    @DeleteMapping("/{name}")
+    public void deleteCourse(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails){
+       try{
+           teamService.deleteCourse(name, userDetails.getUsername());
+       }
+       catch (CourseNotFoundException e){
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       }
+       catch (DocenteHasNotPrivilegeException e){
+           throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+       }
     }
 }

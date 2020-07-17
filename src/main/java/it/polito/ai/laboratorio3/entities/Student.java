@@ -13,6 +13,10 @@ public class Student {
     private String id;
     private String name;
     private String firstName;
+
+    @OneToMany(mappedBy = "student")
+    private List<Token> requests = new ArrayList<>();
+
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "student_course",joinColumns = @JoinColumn(name = "student_id"),inverseJoinColumns = @JoinColumn(name = "course_name"))
     private List<Course> courses = new ArrayList<>();
@@ -33,5 +37,10 @@ public class Student {
     public void removeTeam(Team team){
         teams.remove(team);
         team.getMembers().remove(this);
+    }
+
+    public void addRequest(Token token) {
+        if(!this.requests.contains(token))
+            this.requests.add(token);
     }
 }

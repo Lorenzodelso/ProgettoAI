@@ -5,20 +5,21 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
+import it.polito.ai.laboratorio3.dtos.TokenDTO;
 import it.polito.ai.laboratorio3.entities.Course;
+import it.polito.ai.laboratorio3.entities.Docente;
 import it.polito.ai.laboratorio3.entities.Student;
 import it.polito.ai.laboratorio3.entities.Team;
 import it.polito.ai.laboratorio3.exceptions.*;
-import it.polito.ai.laboratorio3.repositories.CourseRepository;
-import it.polito.ai.laboratorio3.repositories.StudentRepository;
-import it.polito.ai.laboratorio3.repositories.TeamRepository;
-import it.polito.ai.laboratorio3.repositories.TokenRepository;
+import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.Reader;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,14 +41,27 @@ public class TeamServiceImpl implements TeamService {
     TokenRepository tokenRepository;
 
     @Autowired
+    DocenteRepository docenteRepository;
+
+    @Autowired
     ModelMapper modelMapper;
 
 
+    //TODO cambiare eccezione
     @Override
-    public boolean addCourse(CourseDTO course) {
+    public boolean addCourse(CourseDTO course, List<String> ids) {
         Course courseClass = modelMapper.map(course, Course.class);
         if (courseRepository.existsById(courseClass.getName()))
             return false;
+
+        for(String id: ids){
+            Optional<Docente> docenteOpt = docenteRepository.findById(id);
+            if (!docenteOpt.isPresent())
+                throw new RuntimeException();
+            Docente docente = docenteOpt.get();
+
+            courseClass.addDocente(docente);
+        }
         courseRepository.save(courseClass);
         return true;
     }
@@ -290,6 +304,45 @@ public class TeamServiceImpl implements TeamService {
                 .stream()
                 .forEach(teamOpt.get()::removeMember);
         teamRepository.delete(team);
+    }
+
+    //TODO cambio eccezione
+    @Override
+    public List<TokenDTO> getRequestsForStudent(String id, String name) {
+        Optional<Student> studentOpt = studentRepository.findById(id);
+        if (!studentOpt.isPresent())
+            throw new RuntimeException();
+        Student student = studentOpt.get();
+       return student.getRequests()
+                .stream()
+                .filter(req -> req.getCourseName().equals(name))
+                .filter( req-> req.getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now())))
+                .map(req-> modelMapper.map(req, TokenDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //TODO cambiare eccezione
+    @Override
+    public String getCourseNameByTeamId(Long id) {
+        Optional<Team> teamOpt = teamRepository.findById(id);
+        if( !teamOpt.isPresent())
+            throw  new RuntimeException();
+        Team team = teamOpt.get();
+        return team.getCourse().getName();
+    }
+
+    @Override
+    public void deleteCourse(String name, String username) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+        if(course.getDocenti().stream()
+                .filter(doc-> doc.getId().equals(username))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+
+        courseRepository.delete(course);
     }
 
 }

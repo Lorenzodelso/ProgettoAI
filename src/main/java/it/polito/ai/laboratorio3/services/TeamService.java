@@ -3,11 +3,10 @@ package it.polito.ai.laboratorio3.services;
 import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
-import it.polito.ai.laboratorio3.entities.Token;
+import it.polito.ai.laboratorio3.dtos.TokenDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.Reader;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,7 @@ public interface TeamService {
     static final int NON_ATTIVO=0;
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
-    boolean addCourse(CourseDTO course);
+    boolean addCourse(CourseDTO course, List<String> ids);
 
     Optional<CourseDTO> getCourse(String name);
     List<CourseDTO> getAllCourses();
@@ -61,4 +60,11 @@ public interface TeamService {
 
     void activeTeam(Long teamId);
     void evictTeam(Long teamId);
+
+
+    List<TokenDTO> getRequestsForStudent(String id, String name);
+
+    String getCourseNameByTeamId(Long id);
+
+    void deleteCourse(String name, String username);
 }

@@ -2,25 +2,20 @@ package it.polito.ai.laboratorio3.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.laboratorio3.dtos.CourseDTO;
-import it.polito.ai.laboratorio3.dtos.StudentDTO;
-import it.polito.ai.laboratorio3.dtos.TeamDTO;
-import it.polito.ai.laboratorio3.dtos.TokenDTO;
-import it.polito.ai.laboratorio3.entities.Course;
-import it.polito.ai.laboratorio3.entities.Docente;
-import it.polito.ai.laboratorio3.entities.Student;
-import it.polito.ai.laboratorio3.entities.Team;
+import it.polito.ai.laboratorio3.dtos.*;
+import it.polito.ai.laboratorio3.entities.*;
 import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.Reader;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +38,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Autowired
     DocenteRepository docenteRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -404,6 +402,86 @@ public class TeamServiceImpl implements TeamService {
             Optional<Student> studentOpt = studentRepository.findById(id);
             studentOpt.ifPresent(student -> student.unsubscribe(course));
         }
+    }
+
+    //TODO cambiare eccezione
+    @Override
+    public List<VmDTO> getVmsByTeam(String name, Long teamId, String username) {
+        Optional<Team> teamOpt = teamRepository.findById(teamId);
+        if( !teamOpt.isPresent())
+            throw  new TeamNotFoundException();
+        Team team = teamOpt.get();
+
+        if(!team.getCourse().getName().equals(name))
+            throw new RuntimeException();
+
+        return team.getVms().stream()
+                .map(v-> modelMapper.map(v,VmDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    //TODO cambiare eccezione
+    @Override
+    public void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk) {
+        Optional<Team> teamOpt = teamRepository.findById(teamId);
+        if( !teamOpt.isPresent())
+            throw  new TeamNotFoundException();
+        Team team = teamOpt.get();
+
+        if(!team.getCourse().getName().equals(name))
+            throw new RuntimeException();
+
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+
+        if ( course.getDocenti().stream()
+                .filter(d-> d.getId().equals(username))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+
+        if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBdisk)
+            throw new RuntimeException();
+
+        team.setVcpuTot(vcpus);
+        team.setGBDiskTot(GBdisk);
+        team.setGBRamTot(GBram);
+    }
+
+    @Override
+    public List<TaskDTO> getTasks(String name) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+        return course.getTasks()
+                .stream()
+                .map(t-> modelMapper.map(t,TaskDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public TaskDTO createTask(String name, String username, int days) {
+
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+
+        if ( course.getDocenti().stream()
+                .filter(d-> d.getId().equals(username))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+
+        Task task = new Task();
+        task.setDataRilascio(Timestamp.from(Instant.now()));
+        task.setDataScadenza(Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS)));
+
+        task.setCourse(course);
+        task = taskRepository.save(task);
+        course.addTask(task);
+        return modelMapper.map(task, TaskDTO.class);
     }
 
 }

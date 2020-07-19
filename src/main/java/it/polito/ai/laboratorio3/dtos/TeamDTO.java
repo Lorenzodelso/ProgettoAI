@@ -10,6 +10,12 @@ public class TeamDTO {
 
     private String name;
     private int status;
+    private int vcpuTot;
+    private int GBDiskTot;
+    private int GBRamTot;
+    private int vcpuUsati;
+    private int GBDiskUsati;
+    private int GBRamUsati;
 
     public TeamDTO(){}
 }

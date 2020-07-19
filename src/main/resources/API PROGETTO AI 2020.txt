@@ -24,19 +24,19 @@ Corso:
 /API/courses/{name} (PUT update a course)
 /API/courses/{name}/{studentId} (PUT delete a student from enrolled students)
 /API/courses/{name}/unsubscribeMany (PUT delete a list of student from enrolled students)
-
 /API/courses/{name}/teams/{teamId}/vMs (GET all vms for a course and a team)
 /API/courses/{name}/teams/{teamId} (PUT update limit for vms)
 /API/courses/{name}/tasks (GET all tasks for a course)
-/API/courses/{name}/tasks/{taskId}/essays (GET all elaborati for a task)
 /API/courses/{name}/tasks (POST create a new task)
+
+/API/courses/{name}/tasks/{taskId}/essays (GET all elaborati for a task)
 /API/courses/{name}/tasks/{taskId}/essays/{assayId} (GET a specific elaborato)
 /API/courses/{name}/tasks/{taskId}/essays/{assayId} (POST load new version of elaborato)
 
 
 Gruppo: 
-/API/students/{id}/teams/{name}/vMs (GET all vms for a course and a student)
-/API/students/{id}/teams/{name}/vMs (POST new VM for a course and a student)
-/API/students/{id}/teams/{name}/vMs/{vMId} (POST with new status: accensione, spegnimento, cancellazione)
+/API/students/{id}/teams/{teamid}/vMs (GET all vms for a course and a student)
+/API/students/{id}/teams/{teamid}/vMs (POST new VM for a course and a student)
+/API/students/{id}/teams/{teamid}/vMs/{vMId} (POST with new status: accensione, spegnimento, cancellazione)
 
 

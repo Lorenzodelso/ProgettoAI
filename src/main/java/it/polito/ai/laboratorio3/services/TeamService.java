@@ -74,5 +74,11 @@ public interface TeamService {
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     void unsubscribeMany(String name, List<String> ids, String username);
 
-    List<VmDTO> getVmsByTeam(String name, Long valueOf, String username);
+    List<VmDTO> getVmsByTeam(String name, Long teamId, String username);
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk);
+
+    List<TaskDTO> getTasks(String name);
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    TaskDTO createTask(String name, String username, int days);
 }

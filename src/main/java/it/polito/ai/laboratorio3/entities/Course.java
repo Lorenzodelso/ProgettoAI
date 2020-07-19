@@ -49,4 +49,9 @@ public class Course {
         this.students.remove(student);
         student.unsubscribe(this);
     }
+
+    public void addTask(Task task) {
+        if(!this.tasks.contains(task))
+            this.tasks.add(task);
+    }
 }

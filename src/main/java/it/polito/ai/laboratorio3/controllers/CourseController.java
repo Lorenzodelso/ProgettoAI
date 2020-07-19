@@ -3,8 +3,10 @@ package it.polito.ai.laboratorio3.controllers;
 import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
+import it.polito.ai.laboratorio3.dtos.VmDTO;
 import it.polito.ai.laboratorio3.exceptions.CourseNotFoundException;
 import it.polito.ai.laboratorio3.exceptions.DocenteHasNotPrivilegeException;
+import it.polito.ai.laboratorio3.exceptions.DocenteNotFoundException;
 import it.polito.ai.laboratorio3.services.NotificationService;
 import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.services.TeamService;
@@ -152,5 +154,63 @@ public class CourseController {
        catch (DocenteHasNotPrivilegeException e){
            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
        }
+    }
+
+    @PutMapping("/{name}")
+    public CourseDTO updateCourse (@PathVariable String name, @RequestBody CourseDTO dto, @RequestBody Map<String,Object> data, @AuthenticationPrincipal UserDetails userDetails){
+
+        List<String> ids = new ArrayList<>();
+
+        if(data.containsKey("docids"))
+            ids = (List<String>) data.get("docids");
+
+        if(!ids.contains( userDetails.getUsername()))
+            ids.add(userDetails.getUsername());
+
+        try{
+           return teamService.updateCourse(name, dto, ids);
+        }
+        catch (CourseNotFoundException | DocenteNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (DocenteHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{name}/{studentId}")
+    public void updateCourseStudent (@PathVariable String name, @PathVariable String studentId, @AuthenticationPrincipal UserDetails userDetails ){
+        try {
+            teamService.unsubscribeOne(name,studentId,userDetails.getUsername());
+        }
+        catch (CourseNotFoundException | StudentNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (DocenteHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+
+    }
+
+    @PutMapping("/{name}/unsubscribeMany")
+    public void updateCourseStudents (@PathVariable String name, @RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails ){
+
+        if(!data.containsKey("ids"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "request must contain filed ids with the ids of the students");
+
+        List<String> ids = (List<String>) data.get("ids");
+        try {
+            teamService.unsubscribeMany(name,ids,userDetails.getUsername());
+        }
+        catch (CourseNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (DocenteHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/{name}/teams/{teamId}/vms")
+    public List<VmDTO> getVmsFromTeam (@PathVariable String name, @PathVariable String teamId, @AuthenticationPrincipal UserDetails userDetails){
+
+        return teamService.getVmsByTeam(name,Long.valueOf(teamId), userDetails.getUsername());
     }
 }

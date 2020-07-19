@@ -14,6 +14,7 @@ import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -343,6 +344,66 @@ public class TeamServiceImpl implements TeamService {
             throw new DocenteHasNotPrivilegeException();
 
         courseRepository.delete(course);
+    }
+
+    @Override
+    public CourseDTO updateCourse(String name, CourseDTO dto, List<String> ids) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+
+        course.setName(dto.getName());
+        course.setMax(dto.getMax());
+        course.setMin(dto.getMin());
+
+        List<Docente> doc = new ArrayList<>();
+        for(String d: ids){
+            Optional<Docente> docOpt = docenteRepository.findById(d);
+            if( !docOpt.isPresent())
+                throw new DocenteNotFoundException();
+            doc.add(docOpt.get());
+        }
+        course.setDocenti(doc);
+        return dto;
+    }
+
+    @Override
+    public void unsubscribeOne(String name, String studentId, String username) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+
+        if ( course.getDocenti().stream()
+        .filter(d-> d.getId().equals(username))
+        .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
+        if( !studentOpt.isPresent())
+            throw  new StudentNotFoundException();
+        Student student = studentOpt.get();
+
+        student.unsubscribe(course);
+    }
+
+    @Override
+    public void unsubscribeMany(String name, List<String> ids, String username) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+
+        if ( course.getDocenti().stream()
+                .filter(d-> d.getId().equals(username))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+
+        for (String id: ids){
+            Optional<Student> studentOpt = studentRepository.findById(id);
+            studentOpt.ifPresent(student -> student.unsubscribe(course));
+        }
     }
 
 }

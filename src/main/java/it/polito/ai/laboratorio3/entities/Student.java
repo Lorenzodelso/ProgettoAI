@@ -43,4 +43,12 @@ public class Student {
         if(!this.requests.contains(token))
             this.requests.add(token);
     }
+
+    public void unsubscribe(Course course) {
+        if(!this.courses.contains(course))
+            return;
+
+        this.courses.remove(course);
+        course.unsubscribe(this);
+    }
 }

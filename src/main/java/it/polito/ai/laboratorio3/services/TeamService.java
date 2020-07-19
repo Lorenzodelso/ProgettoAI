@@ -1,10 +1,8 @@
 package it.polito.ai.laboratorio3.services;
 
-import it.polito.ai.laboratorio3.dtos.CourseDTO;
-import it.polito.ai.laboratorio3.dtos.StudentDTO;
-import it.polito.ai.laboratorio3.dtos.TeamDTO;
-import it.polito.ai.laboratorio3.dtos.TokenDTO;
+import it.polito.ai.laboratorio3.dtos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Reader;
 import java.util.List;
@@ -66,5 +64,15 @@ public interface TeamService {
 
     String getCourseNameByTeamId(Long id);
 
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     void deleteCourse(String name, String username);
+
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    CourseDTO updateCourse(String name,CourseDTO dto, List<String> ids);
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    void unsubscribeOne(String name, String studentId, String username);
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    void unsubscribeMany(String name, List<String> ids, String username);
+
+    List<VmDTO> getVmsByTeam(String name, Long valueOf, String username);
 }

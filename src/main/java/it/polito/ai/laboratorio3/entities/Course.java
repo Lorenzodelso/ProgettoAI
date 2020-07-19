@@ -42,4 +42,11 @@ public class Course {
     public void addTeam(Team team){
         team.setCourse(this);
     }
+
+    public void unsubscribe(Student student) {
+        if(!this.students.contains(student))
+            return;
+        this.students.remove(student);
+        student.unsubscribe(this);
+    }
 }

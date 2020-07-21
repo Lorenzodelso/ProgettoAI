@@ -25,4 +25,8 @@ public class Task {
 
     @OneToMany(mappedBy = "task")
     private List<Essay> essays = new ArrayList<>();
+
+    public void addEssay(Essay essay) {
+        this.essays.add(essay);
+    }
 }

@@ -8,6 +8,7 @@ import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -44,6 +45,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    EssayRepository essayRepository;
 
 
     //TODO cambiare eccezione
@@ -462,6 +466,42 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public TaskDTO getTask(String name, Long taskId, UserDetails userDetails) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+        Optional<Task> taskOpt = course.getTasks().stream()
+                .filter(t-> t.getId().equals(taskId))
+                .findFirst();
+        if (!taskOpt.isPresent())
+            throw new TaskNotFoundException();
+
+        if (userDetails.getAuthorities().contains("ROLE_PROFESSOR"))
+            return modelMapper.map(taskOpt.get(),TaskDTO.class);
+        else {
+            if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+                if(taskOpt.get().getEssays().stream()
+                        .noneMatch(e -> e.getStudent().getId().equals(userDetails.getUsername()))){
+                    //Creare essay
+                    Essay essay = new Essay();
+                    essay.setModificabile(true);
+                    essay.setVoto(-1);
+                    essay.setStato(Essay.stati.Letto);
+
+                    Optional<Student> studentOptional = studentRepository.findById(userDetails.getUsername());
+                    if(!studentOptional.isPresent())
+                        throw new StudentNotFoundException();
+                    essay.setStudent(studentOptional.get());
+                    essay.setTask(taskOpt.get());
+                    essayRepository.save(essay);
+                }
+            }
+            return modelMapper.map(taskOpt.get(),TaskDTO.class);
+        }
+    }
+
+    @Override
     public TaskDTO createTask(String name, String username, int days) {
 
         Optional<Course> courseOpt = courseRepository.findById(name);
@@ -482,6 +522,39 @@ public class TeamServiceImpl implements TeamService {
         task = taskRepository.save(task);
         course.addTask(task);
         return modelMapper.map(task, TaskDTO.class);
+    }
+
+    @Override
+    public List<EssayDTO> getEssays(Long taskId){
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+        return task.getEssays().stream()
+                .map(e -> modelMapper.map(e,EssayDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails) {
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+        Optional<Essay> essayOpt = task.getEssays().stream()
+                .filter(e-> e.getId().equals(essayId))
+                .findFirst();
+        if (!essayOpt.isPresent())
+            throw new EssayNotFoundException();
+
+        if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+            if(essayOpt.get().getStato().equals(Essay.stati.Rivisto)){
+                essayOpt.get().setStato(Essay.stati.Letto);
+            }
+        }
+        return modelMapper.map(essayOpt.get(),EssayDTO.class);
     }
 
 }

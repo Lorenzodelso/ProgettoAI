@@ -79,6 +79,10 @@ public interface TeamService {
     void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk);
 
     List<TaskDTO> getTasks(String name);
+    TaskDTO getTask(String name, Long taskId,UserDetails userDetails);
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     TaskDTO createTask(String name, String username, int days);
+
+    List<EssayDTO> getEssays(Long taskId);
+    EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
 }

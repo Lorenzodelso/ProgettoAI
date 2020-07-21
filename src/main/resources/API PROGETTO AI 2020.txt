@@ -1,6 +1,6 @@
 API REST PROGETTO AI 2020
 
-Studente: 
+Studente:
 
 /API/students (GET all students)
 /API/students/{studentId} (GET a student)
@@ -11,7 +11,7 @@ Studente:
 
 
 
-Corso: 
+Corso:
 
 /API/courses/ (GET all courses)
 /API/courses/{name} (GET a course)
@@ -28,13 +28,13 @@ Corso:
 /API/courses/{name}/teams/{teamId} (PUT update limit for vms)
 /API/courses/{name}/tasks (GET all tasks for a course)
 /API/courses/{name}/tasks (POST create a new task)
-
 /API/courses/{name}/tasks/{taskId}/essays (GET all elaborati for a task)
 /API/courses/{name}/tasks/{taskId}/essays/{assayId} (GET a specific elaborato)
+
 /API/courses/{name}/tasks/{taskId}/essays/{assayId} (POST load new version of elaborato)
 
 
-Gruppo: 
+Gruppo:
 /API/students/{id}/teams/{teamid}/vMs (GET all vms for a course and a student)
 /API/students/{id}/teams/{teamid}/vMs (POST new VM for a course and a student)
 /API/students/{id}/teams/{teamid}/vMs/{vMId} (POST with new status: accensione, spegnimento, cancellazione)

@@ -35,9 +35,6 @@ public class Team {
     @OneToMany(mappedBy = "team")
     private List<Vm> vms = new ArrayList<>();
 
-    @OneToMany(mappedBy = "team")
-    private List<Essay> essays = new ArrayList<>();
-
     public void setCourse(Course course){
         if (course == null){
             this.course.getTeams().remove(this);

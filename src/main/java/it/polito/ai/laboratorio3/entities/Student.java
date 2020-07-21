@@ -24,6 +24,9 @@ public class Student {
     @ManyToMany(mappedBy = "members")
     private List<Team> teams = new ArrayList<>();
 
+    @OneToMany(mappedBy = "student")
+    private List<Essay> essays = new ArrayList<>();
+
     public void addCourse(Course course){
         courses.add(course);
         course.getStudents().add(this);
@@ -50,5 +53,9 @@ public class Student {
 
         this.courses.remove(course);
         course.unsubscribe(this);
+    }
+
+    public void addEssay(Essay essay) {
+        this.essays.add(essay);
     }
 }

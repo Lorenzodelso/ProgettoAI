@@ -7,6 +7,7 @@ import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -223,11 +224,20 @@ public class CourseController {
     }
 
     @GetMapping("/{name}/tasks")
-    public List<TaskDTO> getTask(@PathVariable String name) {
+    public List<TaskDTO> getTasks(@PathVariable String name) {
         try {
             return teamService.getTasks(name);
         } catch (CourseNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping("/{name}/tasks/{taskId}")
+    public TaskDTO getTask(@PathVariable String name, @PathVariable String taskId, @AuthenticationPrincipal UserDetails userDetails){
+        try{
+            return teamService.getTask(name,Long.valueOf(taskId),userDetails);
+        }catch (TaskNotFoundException | StudentNotFoundException | CourseNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }
 
@@ -246,5 +256,26 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
+
+    @GetMapping("/{name}/tasks/{taskId}/essays")
+    //TODO controllare se funziona anche senza parametro name
+    public List<EssayDTO> getEssays(@PathVariable String taskId, @PathVariable String name){
+        try{
+            return teamService.getEssays(Long.valueOf(taskId));
+        }catch (TaskNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
+    @GetMapping("/{name}/tasks/{taskId}/essays/{essayId}")
+    public EssayDTO getEssay(@PathVariable String taskId, @PathVariable String name, @PathVariable String essayId,@AuthenticationPrincipal UserDetails userDetails){
+        try{
+            return teamService.getEssay(Long.valueOf(taskId),Long.valueOf(essayId),userDetails);
+        } catch (EssayNotFoundException | TaskNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
+
 
 }

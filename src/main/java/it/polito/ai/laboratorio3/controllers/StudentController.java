@@ -1,9 +1,10 @@
 package it.polito.ai.laboratorio3.controllers;
 
-import it.polito.ai.laboratorio3.dtos.CourseDTO;
-import it.polito.ai.laboratorio3.dtos.StudentDTO;
-import it.polito.ai.laboratorio3.dtos.TeamDTO;
-import it.polito.ai.laboratorio3.dtos.TokenDTO;
+import it.polito.ai.laboratorio3.dtos.*;
+import it.polito.ai.laboratorio3.exceptions.InsufficientResourcesException;
+import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.TeamNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.VmNotFoundException;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,4 +63,39 @@ public class StudentController {
         List<TokenDTO> tokens = teamService.getRequestsForStudent(id, name);
         return tokens;
     }
+
+    @GetMapping("/{id}/teams/{teamid}/vMs")
+    public List<VmDTO> getVms (@PathVariable String id, @PathVariable String teamId){
+        try {
+            return teamService.getVmsByStudent(id, Long.valueOf(teamId));
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/teams/{teamid}/vM")
+    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto){
+        try {
+            return teamService.createVm(id, Long.valueOf(teamId), dto);
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+        catch (InsufficientResourcesException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+
+    }
+
+    @PutMapping("/{id}/teams/{teamid}/vMs/{vMId}/switch")
+    public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId){
+        try {
+            teamService.switchVm(id,Long.valueOf(teamId),Long.valueOf(vmId));
+        }
+        catch (StudentNotFoundException | TeamNotFoundException | VmNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
 }

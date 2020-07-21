@@ -85,4 +85,11 @@ public interface TeamService {
 
     List<EssayDTO> getEssays(Long taskId);
     EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
+
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    List<VmDTO> getVmsByStudent(String studentId, Long teamId);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    VmDTO createVm(String id, Long teamId, VmDTO dto);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    void switchVm(String id, Long teamId, Long vmId);
 }

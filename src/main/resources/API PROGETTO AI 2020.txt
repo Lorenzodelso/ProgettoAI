@@ -37,6 +37,6 @@ Corso:
 Gruppo:
 /API/students/{id}/teams/{teamid}/vMs (GET all vms for a course and a student)
 /API/students/{id}/teams/{teamid}/vMs (POST new VM for a course and a student)
-/API/students/{id}/teams/{teamid}/vMs/{vMId} (POST with new status: accensione, spegnimento, cancellazione)
+/API/students/{id}/teams/{teamid}/vMs/{vMId}/switch (POST with new status: accensione, spegnimento, cancellazione)
 
 

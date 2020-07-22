@@ -276,6 +276,12 @@ public class CourseController {
         }
     }
 
-
-
+    @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}")
+    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails){
+        try{
+            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId),(String) data.get("data"),userDetails);
+        } catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
 }

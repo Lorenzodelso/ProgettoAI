@@ -17,6 +17,10 @@ public class Essay {
     private int voto;
     private stati stato;
 
+    //TODO per ora i dati contenuti nell'essay sono banalmente una stringa
+    // concordare come mappare i dati di una consegna anche lato client (magari un file?)
+    private String data;
+
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Student student;
 

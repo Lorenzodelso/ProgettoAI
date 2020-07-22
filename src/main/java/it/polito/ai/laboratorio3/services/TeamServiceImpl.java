@@ -487,6 +487,7 @@ public class TeamServiceImpl implements TeamService {
                     Essay essay = new Essay();
                     essay.setModificabile(true);
                     essay.setVoto(-1);
+                    essay.setData("");
                     essay.setStato(Essay.stati.Letto);
 
                     Optional<Student> studentOptional = studentRepository.findById(userDetails.getUsername());
@@ -555,6 +556,34 @@ public class TeamServiceImpl implements TeamService {
             }
         }
         return modelMapper.map(essayOpt.get(),EssayDTO.class);
+    }
+
+    @Override
+    public EssayDTO loadEssay(Long taskId, Long essayId, String data, UserDetails userDetails) {
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+        Optional<Essay> essayOpt = task.getEssays().stream()
+                .filter(e-> e.getId().equals(essayId))
+                .findFirst();
+        if (!essayOpt.isPresent())
+            throw new EssayNotFoundException();
+        Essay essay = essayOpt.get();
+        if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+            essay.setStato(Essay.stati.Consegnato);
+        }else{
+            if (userDetails.getAuthorities().contains(("ROLE_PROFESSOR"))){
+                if(essay.getStato().equals(Essay.stati.Consegnato))
+                    essay.setStato(Essay.stati.Rivisto);
+                else{
+                    throw new EssayNotLoadedByStudentException();
+                }
+            }
+        }
+        essay.setData(data);
+        return modelMapper.map(essay,EssayDTO.class);
     }
 
 }

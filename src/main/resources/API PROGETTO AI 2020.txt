@@ -29,9 +29,8 @@ Corso:
 /API/courses/{name}/tasks (GET all tasks for a course)
 /API/courses/{name}/tasks (POST create a new task)
 /API/courses/{name}/tasks/{taskId}/essays (GET all elaborati for a task)
-/API/courses/{name}/tasks/{taskId}/essays/{assayId} (GET a specific elaborato)
-
-/API/courses/{name}/tasks/{taskId}/essays/{assayId} (POST load new version of elaborato)
+/API/courses/{name}/tasks/{taskId}/essays/{essayId} (GET a specific elaborato)
+/API/courses/{name}/tasks/{taskId}/essays/{essayId} (PUT load new version of elaborato)
 
 
 Gruppo:

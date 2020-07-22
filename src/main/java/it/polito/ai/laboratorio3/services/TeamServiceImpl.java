@@ -10,9 +10,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.io.Reader;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -87,8 +90,9 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addStudent(StudentDTO student) {
+    public boolean addStudent(StudentDTO student, byte[] studentImg){
         Student studentClass = modelMapper.map(student, Student.class);
+        studentClass.setPhotoStudent(studentImg);
         if (studentRepository.existsById(studentClass.getId()))
             return false;
         studentRepository.save(studentClass);
@@ -151,11 +155,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> addAll(List<StudentDTO> students) {
+    public List<Boolean> addAll(List<StudentDTO> students){
         List<Boolean> results = new ArrayList<>();
         students.stream()
                 .forEach(studentDTO -> {
-                    if(addStudent(studentDTO))
+                    if(addStudent(studentDTO, new byte[0]))
                         results.add(true);
                     else
                         results.add(false);

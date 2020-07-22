@@ -3,6 +3,8 @@ package it.polito.ai.laboratorio3.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,6 +22,9 @@ public class Essay {
     //TODO per ora i dati contenuti nell'essay sono banalmente una stringa
     // concordare come mappare i dati di una consegna anche lato client (magari un file?)
     private String data;
+
+    @OneToMany(mappedBy = "essay")
+    private List<Image> images = new ArrayList<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Student student;

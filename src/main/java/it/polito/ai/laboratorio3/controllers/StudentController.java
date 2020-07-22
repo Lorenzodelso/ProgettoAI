@@ -9,8 +9,10 @@ import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +41,14 @@ public class StudentController {
     }
 
     @PostMapping({"","/"})
-    public StudentDTO addStudent(@RequestBody StudentDTO studentDTO){
-        if(teamService.addStudent(studentDTO))
-            return enrich(studentDTO);
-        else throw new ResponseStatusException(HttpStatus.CONFLICT,studentDTO.getId());
+    public StudentDTO addStudent(@RequestBody StudentDTO studentDTO, @RequestBody MultipartFile studentImg){
+        try {
+            if (teamService.addStudent(studentDTO, studentImg.getBytes()))
+                return enrich(studentDTO);
+            else throw new ResponseStatusException(HttpStatus.CONFLICT, studentDTO.getId());
+        }catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Errore caricamento immagine!");
+        }
     }
 
     @GetMapping("/{id}/courses")

@@ -17,6 +17,8 @@ public class Vm {
     private int GBDisk;
     private int GBRam;
     private stati status;
+    @Lob
+    private byte[] photoVm;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Team team;

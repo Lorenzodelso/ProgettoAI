@@ -15,6 +15,8 @@ public class Docente{
     private String id;
     private String name;
     private String firstName;
+    @Lob
+    private byte[] photoDocente;
 
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "docente_course",joinColumns = @JoinColumn(name = "docente_id"),inverseJoinColumns = @JoinColumn(name = "course_name"))

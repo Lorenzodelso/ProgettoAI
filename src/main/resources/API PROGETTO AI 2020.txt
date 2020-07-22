@@ -38,4 +38,16 @@ Gruppo:
 /API/students/{id}/teams/{teamid}/vMs (POST new VM for a course and a student)
 /API/students/{id}/teams/{teamid}/vMs/{vMId}/switch (POST with new status: accensione, spegnimento, cancellazione)
 
+TODO:
+- gestione delle immagini
+    aggiunte immagini agli studenti, per ora non aggiunte al DTO, valutare
+    PUT per cambiare immagine di uno studente già registrato
+    GET per prendere solo l'immagine
 
+    Manca da aggiungere immagini al docente, vm e essay
+
+- relazione con owner delle vm
+
+- registrazione degli utenti nel sistema
+    API per registrazione (non solo login) -> dopo registrazione creazione di studente/docente e inserimento nel sistema
+    Invio mail di conferma 

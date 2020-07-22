@@ -3,7 +3,9 @@ package it.polito.ai.laboratorio3.services;
 import it.polito.ai.laboratorio3.dtos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +19,7 @@ public interface TeamService {
 
     Optional<CourseDTO> getCourse(String name);
     List<CourseDTO> getAllCourses();
-    boolean addStudent(StudentDTO student);
+    boolean addStudent(StudentDTO student, byte[] studentImg);
     Optional<StudentDTO> getStudent(String studentId);
     List<StudentDTO> getAllStudents();
     List<StudentDTO> getEnrolledStudents(String courseName);

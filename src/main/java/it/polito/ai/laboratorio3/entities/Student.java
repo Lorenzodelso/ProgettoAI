@@ -13,6 +13,8 @@ public class Student {
     private String id;
     private String name;
     private String firstName;
+    @Lob
+    private byte[] photoStudent;
 
     @OneToMany(mappedBy = "student")
     private List<Token> requests = new ArrayList<>();

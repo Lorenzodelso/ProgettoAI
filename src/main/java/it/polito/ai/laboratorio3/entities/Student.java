@@ -29,6 +29,9 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private List<Essay> essays = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "owners")
+    private List<Vm> vms = new ArrayList<>();
+
     public void addCourse(Course course){
         courses.add(course);
         course.getStudents().add(this);
@@ -59,5 +62,12 @@ public class Student {
 
     public void addEssay(Essay essay) {
         this.essays.add(essay);
+    }
+
+    public void addVm(Vm vm) {
+        if(!vms.contains(vm)){
+            vms.add(vm);
+            vm.addOwner(this);
+        }
     }
 }

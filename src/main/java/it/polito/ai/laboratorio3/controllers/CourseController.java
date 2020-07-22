@@ -277,10 +277,13 @@ public class CourseController {
     }
 
     @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}")
-    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails){
+    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody MultipartFile data, @AuthenticationPrincipal UserDetails userDetails){
         try{
-            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId),(String) data.get("data"),userDetails);
-        } catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
+            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), data.getBytes(), userDetails);
+        } catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
+        }
+        catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }

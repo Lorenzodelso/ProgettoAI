@@ -1,10 +1,7 @@
 package it.polito.ai.laboratorio3.controllers;
 
 import it.polito.ai.laboratorio3.dtos.*;
-import it.polito.ai.laboratorio3.exceptions.InsufficientResourcesException;
-import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
-import it.polito.ai.laboratorio3.exceptions.TeamNotFoundException;
-import it.polito.ai.laboratorio3.exceptions.VmNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,7 +67,7 @@ public class StudentController {
         return tokens;
     }
 
-    @GetMapping("/{id}/teams/{teamid}/vMs")
+    @GetMapping("/{id}/teams/{teamid}/vms")
     public List<VmDTO> getVms (@PathVariable String id, @PathVariable String teamId){
         try {
             return teamService.getVmsByStudent(id, Long.valueOf(teamId));
@@ -80,21 +77,38 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/{id}/teams/{teamid}/vM")
-    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto){
+    @PostMapping("/{id}/teams/{teamid}/vm")
+    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm){
         try {
-            return teamService.createVm(id, Long.valueOf(teamId), dto);
+
+            return teamService.createVm(id, Long.valueOf(teamId), dto, screenVm.getBytes());
+        }
+        catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Errore caricamento Vm");
         }
         catch (StudentNotFoundException | TeamNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
-        catch (InsufficientResourcesException e){
+        catch (InsufficientResourcesException | StudentHasNotPrivilegeException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
         }
 
     }
 
-    @PutMapping("/{id}/teams/{teamid}/vMs/{vMId}/switch")
+    @DeleteMapping("/{id}/teams/{teamid}/vms/{vmId}")
+    public void deleteVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId){
+        try {
+            teamService.deleteVm(id, Long.valueOf(teamId), Long.valueOf(vmId));
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+        catch (StudentHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/switch")
     public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId){
         try {
             teamService.switchVm(id,Long.valueOf(teamId),Long.valueOf(vmId));

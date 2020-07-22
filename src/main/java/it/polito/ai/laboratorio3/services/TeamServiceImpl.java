@@ -10,12 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.io.Reader;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -54,6 +51,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Autowired
     VmRepository vmRepository;
+
+    @Autowired
+    ImageRepository imageRepository;
 
 
     //TODO cambiare eccezione
@@ -494,7 +494,6 @@ public class TeamServiceImpl implements TeamService {
                     Essay essay = new Essay();
                     essay.setModificabile(true);
                     essay.setVoto(-1);
-                    essay.setData("");
                     essay.setStato(Essay.stati.Letto);
 
                     Optional<Student> studentOptional = studentRepository.findById(userDetails.getUsername());
@@ -583,7 +582,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public VmDTO createVm(String id, Long teamId, VmDTO dto) {
+    public VmDTO createVm(String id, Long teamId, VmDTO dto, byte[] bytes) {
         if(!studentRepository.existsById(id))
             throw new StudentNotFoundException();
         Student student = studentRepository.getOne(id);
@@ -606,7 +605,9 @@ public class TeamServiceImpl implements TeamService {
         vm.setGBDisk(dto.getGBDisk());
         vm.setGBRam(dto.getGBRam());
         vm.setVcpu(dto.getVcpu());
+        vm.setScreenVm(bytes);
         vm = vmRepository.save(vm);
+        vm.addOwner(student);
         return modelMapper.map(vm,VmDTO.class);
     }
 
@@ -626,6 +627,10 @@ public class TeamServiceImpl implements TeamService {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException();
         Vm vm = vmRepository.getOne(vmId);
+
+        if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
+            throw new StudentHasNotPrivilegeException();
+
         if(vm.getStatus().equals(Vm.stati.Accesa))
             vm.setStatus(Vm.stati.Spenta);
         else
@@ -633,7 +638,33 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public EssayDTO loadEssay(Long taskId, Long essayId, String data, UserDetails userDetails) {
+    public void deleteVm(String id, Long teamId, Long vmId) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+        if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
+            throw new VmNotFoundException();
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException();
+        Vm vm = vmRepository.getOne(vmId);
+
+        if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
+            throw new StudentHasNotPrivilegeException();
+
+        team.setGBDiskUsati(team.getGBDiskUsati()-vm.getGBDisk());
+        team.setGBRamUsati(team.getGBDiskUsati()-vm.getGBRam());
+        team.setVcpuUsati(team.getVcpuUsati()-vm.getVcpu());
+        vmRepository.delete(vm);
+    }
+
+    @Override
+    public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails) {
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if ( !taskOpt.isPresent()){
             throw new TaskNotFoundException();
@@ -656,7 +687,11 @@ public class TeamServiceImpl implements TeamService {
                 }
             }
         }
-        essay.setData(data);
+        Image image = new Image();
+        image.setCreationDate(Timestamp.from(Instant.now()));
+        image.setData(data);
+        image = imageRepository.save(image);
+        essay.addImage(image);
         return modelMapper.map(essay,EssayDTO.class);
     }
 

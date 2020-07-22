@@ -34,9 +34,10 @@ Corso:
 
 
 Gruppo:
-/API/students/{id}/teams/{teamid}/vMs (GET all vms for a course and a student)
-/API/students/{id}/teams/{teamid}/vMs (POST new VM for a course and a student)
-/API/students/{id}/teams/{teamid}/vMs/{vMId}/switch (POST with new status: accensione, spegnimento, cancellazione)
+/API/students/{id}/teams/{teamid}/vms (GET all vms for a course and a student)
+/API/students/{id}/teams/{teamid}/vms (POST new VM for a course and a student)
+/API/students/{id}/teams/{teamid}/vms/{vMId}/switch (POST with new status: accensione, spegnimento, cancellazione)
+/API/students/{id}/teams/{teamid}/vms/{vMId} (DELETE cancella una vm e libera spazio dal gruppo)
 
 TODO:
 - gestione delle immagini

@@ -49,6 +49,9 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     EssayRepository essayRepository;
 
+    @Autowired
+    VmRepository vmRepository;
+
 
     //TODO cambiare eccezione
     @Override
@@ -556,6 +559,73 @@ public class TeamServiceImpl implements TeamService {
             }
         }
         return modelMapper.map(essayOpt.get(),EssayDTO.class);
+    }
+
+    @Override
+    public List<VmDTO> getVmsByStudent(String studentId, Long teamId) {
+        if(!studentRepository.existsById(studentId))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(studentId);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+
+        return team.getVms().stream()
+                .map(v-> modelMapper.map(v,VmDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public VmDTO createVm(String id, Long teamId, VmDTO dto) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+
+        if(team.getVcpuTot() - team.getVcpuUsati() < dto.getVcpu())
+            throw new InsufficientResourcesException();
+        if(team.getGBRamTot() - team.getGBRamUsati() < dto.getGBRam())
+            throw new InsufficientResourcesException();
+        if(team.getGBDiskTot() - team.getGBDiskUsati() < dto.getGBDisk())
+            throw new InsufficientResourcesException();
+
+        Vm vm = new Vm();
+        vm.setStatus(Vm.stati.Accesa);
+        vm.setGBDisk(dto.getGBDisk());
+        vm.setGBRam(dto.getGBRam());
+        vm.setVcpu(dto.getVcpu());
+        vm = vmRepository.save(vm);
+        return modelMapper.map(vm,VmDTO.class);
+    }
+
+    @Override
+    public void switchVm(String id, Long teamId, Long vmId) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+        if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
+            throw new VmNotFoundException();
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException();
+        Vm vm = vmRepository.getOne(vmId);
+        if(vm.getStatus().equals(Vm.stati.Accesa))
+            vm.setStatus(Vm.stati.Spenta);
+        else
+            vm.setStatus(Vm.stati.Accesa);
     }
 
     @Override

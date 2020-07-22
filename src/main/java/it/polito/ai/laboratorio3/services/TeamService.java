@@ -2,6 +2,7 @@ package it.polito.ai.laboratorio3.services;
 
 import it.polito.ai.laboratorio3.dtos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Reader;
@@ -83,6 +84,9 @@ public interface TeamService {
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     TaskDTO createTask(String name, String username, int days);
 
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     List<EssayDTO> getEssays(Long taskId);
+
     EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
+    EssayDTO loadEssay(Long taskId, Long essayId,String data, UserDetails userDetails);
 }

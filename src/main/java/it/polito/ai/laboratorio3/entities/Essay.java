@@ -10,13 +10,12 @@ import java.util.List;
 @Data
 public class Essay {
 
-    public enum stati {Letto, Consegnato, Rivisto}
+    public enum stati {Letto, Consegnato, Rivisto, Terminato}
 
     @Id
     @GeneratedValue
     private Long id;
-    private boolean modificabile;
-    private int voto;
+    private Long voto;
     private stati stato;
 
     @OneToMany(mappedBy = "essay")

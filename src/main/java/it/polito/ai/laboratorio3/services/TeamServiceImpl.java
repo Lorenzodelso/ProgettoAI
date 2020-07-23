@@ -492,8 +492,7 @@ public class TeamServiceImpl implements TeamService {
                         .noneMatch(e -> e.getStudent().getId().equals(userDetails.getUsername()))){
                     //Creare essay
                     Essay essay = new Essay();
-                    essay.setModificabile(true);
-                    essay.setVoto(-1);
+                    essay.setVoto(Long.valueOf("-1"));
                     essay.setStato(Essay.stati.Letto);
 
                     Optional<Student> studentOptional = studentRepository.findById(userDetails.getUsername());
@@ -664,7 +663,31 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails) {
+    public byte[] getImage(String id) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        return studentRepository.getOne(id).getPhotoStudent();
+    }
+
+    @Override
+    public List<ImageDTO> getStorical(String name, Long taskId, Long essayId) {
+        if(!courseRepository.existsById(name))
+            throw new CourseNotFoundException();
+        if(!taskRepository.existsById(taskId))
+            throw new TaskNotFoundException();
+        Task task = taskRepository.getOne(taskId);
+        if(!task.getCourse().getName().equals(name))
+            throw new TaskNotFoundException();
+        if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))
+            throw new EssayNotFoundException();
+        Essay essay = essayRepository.getOne(essayId);
+        return essay.getImages().stream()
+                .map(i-> modelMapper.map(i,ImageDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto) {
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if ( !taskOpt.isPresent()){
             throw new TaskNotFoundException();
@@ -676,14 +699,24 @@ public class TeamServiceImpl implements TeamService {
         if (!essayOpt.isPresent())
             throw new EssayNotFoundException();
         Essay essay = essayOpt.get();
+
+        if(essay.getStato().equals(Essay.stati.Terminato))
+            throw new EssayNotModifiableException();
+
         if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
             essay.setStato(Essay.stati.Consegnato);
         }else{
             if (userDetails.getAuthorities().contains(("ROLE_PROFESSOR"))){
-                if(essay.getStato().equals(Essay.stati.Consegnato))
-                    essay.setStato(Essay.stati.Rivisto);
-                else{
+
+                if(!essay.getStato().equals(Essay.stati.Consegnato))
                     throw new EssayNotLoadedByStudentException();
+
+                if(voto.equals(Long.valueOf("-1"))){
+                    essay.setStato(Essay.stati.Rivisto);
+                    }
+                else{
+                    essay.setVoto(voto);
+                    essay.setStato(Essay.stati.Terminato);
                 }
             }
         }

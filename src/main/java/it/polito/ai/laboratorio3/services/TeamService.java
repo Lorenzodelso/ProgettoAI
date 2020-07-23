@@ -87,7 +87,7 @@ public interface TeamService {
     List<EssayDTO> getEssays(Long taskId);
 
     EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
-    EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails);
+    EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<VmDTO> getVmsByStudent(String studentId, Long teamId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
@@ -96,4 +96,8 @@ public interface TeamService {
     void switchVm(String id, Long teamId, Long vmId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     void deleteVm(String id, Long teamId, Long vmId);
+
+    byte[] getImage(String id);
+
+    List<ImageDTO> getStorical(String name, Long taskId, Long essayId);
 }

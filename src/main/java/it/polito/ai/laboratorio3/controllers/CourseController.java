@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.Lob;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -276,10 +278,28 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/{name}/tasks/{taskId}/essays/{essayId}/storical")
+    public List<ImageDTO> getEssayStorical(@PathVariable String taskId, @PathVariable String name, @PathVariable String essayId) {
+        try {
+            return teamService.getStorical(name, Long.valueOf(taskId), Long.valueOf(essayId));
+        } catch (EssayNotFoundException | TaskNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
     @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}")
-    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody MultipartFile data, @AuthenticationPrincipal UserDetails userDetails){
+    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody MultipartFile data, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String,String> option){
+        Long voto;
+        if(option.containsKey("voto"))
+            voto = Long.valueOf(option.get("voto"));
+        else
+            voto = Long.valueOf("-1");
+        if(voto.intValue() > 31)
+            voto = Long.valueOf("31");
+        if(voto.intValue() < 18)
+            voto = Long.valueOf("17");
         try{
-            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), data.getBytes(), userDetails);
+            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), data.getBytes(), userDetails, voto);
         } catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
         }

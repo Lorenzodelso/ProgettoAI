@@ -3,8 +3,14 @@ package it.polito.ai.laboratorio3.controllers;
 import it.polito.ai.laboratorio3.dtos.*;
 import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.services.TeamService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -78,9 +84,12 @@ public class StudentController {
     }
 
     @PostMapping("/{id}/teams/{teamid}/vm")
-    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm){
-        try {
+    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm, @AuthenticationPrincipal UserDetails userDetails){
 
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must create a vm with your Id");
+
+        try {
             return teamService.createVm(id, Long.valueOf(teamId), dto, screenVm.getBytes());
         }
         catch (IOException e){
@@ -96,7 +105,10 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}/teams/{teamid}/vms/{vmId}")
-    public void deleteVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId){
+    public void deleteVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must delete a vm with your Id");
+
         try {
             teamService.deleteVm(id, Long.valueOf(teamId), Long.valueOf(vmId));
         }
@@ -109,7 +121,11 @@ public class StudentController {
     }
 
     @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/switch")
-    public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId){
+    public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
+
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must update a vm with your Id");
+
         try {
             teamService.switchVm(id,Long.valueOf(teamId),Long.valueOf(vmId));
         }
@@ -118,4 +134,14 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{id}/image")
+    public ResponseEntity<Resource> getImage (@PathVariable String id){
+        try{
+            byte[] file = teamService.getImage(id);
+            return ResponseEntity.ok().body(new ByteArrayResource(file));
+        }
+        catch (StudentNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
 }

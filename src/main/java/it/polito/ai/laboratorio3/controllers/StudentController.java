@@ -87,7 +87,7 @@ public class StudentController {
     public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm, @AuthenticationPrincipal UserDetails userDetails){
 
         if(!id.equals(userDetails.getUsername()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must create a vm with your Id");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must create a vm with your Id");
 
         try {
             return teamService.createVm(id, Long.valueOf(teamId), dto, screenVm.getBytes());
@@ -107,7 +107,7 @@ public class StudentController {
     @DeleteMapping("/{id}/teams/{teamid}/vms/{vmId}")
     public void deleteVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
         if(!id.equals(userDetails.getUsername()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must delete a vm with your Id");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must delete a vm with your Id");
 
         try {
             teamService.deleteVm(id, Long.valueOf(teamId), Long.valueOf(vmId));
@@ -124,7 +124,7 @@ public class StudentController {
     public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
 
         if(!id.equals(userDetails.getUsername()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"You must update a vm with your Id");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
 
         try {
             teamService.switchVm(id,Long.valueOf(teamId),Long.valueOf(vmId));

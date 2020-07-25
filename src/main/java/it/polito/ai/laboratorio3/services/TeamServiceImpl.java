@@ -56,7 +56,6 @@ public class TeamServiceImpl implements TeamService {
     ImageRepository imageRepository;
 
 
-    //TODO cambiare eccezione
     @Override
     public boolean addCourse(CourseDTO course, List<String> ids) {
         Course courseClass = modelMapper.map(course, Course.class);
@@ -66,7 +65,7 @@ public class TeamServiceImpl implements TeamService {
         for(String id: ids){
             Optional<Docente> docenteOpt = docenteRepository.findById(id);
             if (!docenteOpt.isPresent())
-                throw new RuntimeException();
+                throw new DocenteNotFoundException();
             Docente docente = docenteOpt.get();
 
             courseClass.addDocente(docente);
@@ -316,12 +315,11 @@ public class TeamServiceImpl implements TeamService {
         teamRepository.delete(team);
     }
 
-    //TODO cambio eccezione
     @Override
     public List<TokenDTO> getRequestsForStudent(String id, String name) {
         Optional<Student> studentOpt = studentRepository.findById(id);
         if (!studentOpt.isPresent())
-            throw new RuntimeException();
+            throw new StudentNotFoundException();
         Student student = studentOpt.get();
        return student.getRequests()
                 .stream()
@@ -331,12 +329,12 @@ public class TeamServiceImpl implements TeamService {
                 .collect(Collectors.toList());
     }
 
-    //TODO cambiare eccezione
+
     @Override
     public String getCourseNameByTeamId(Long id) {
         Optional<Team> teamOpt = teamRepository.findById(id);
         if( !teamOpt.isPresent())
-            throw  new RuntimeException();
+            throw  new TeamNotFoundException();
         Team team = teamOpt.get();
         return team.getCourse().getName();
     }
@@ -415,7 +413,6 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
-    //TODO cambiare eccezione
     @Override
     public List<VmDTO> getVmsByTeam(String name, Long teamId, String username) {
         Optional<Team> teamOpt = teamRepository.findById(teamId);
@@ -424,14 +421,13 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamOpt.get();
 
         if(!team.getCourse().getName().equals(name))
-            throw new RuntimeException();
+            throw new TeamNotFoundException();
 
         return team.getVms().stream()
                 .map(v-> modelMapper.map(v,VmDTO.class))
                 .collect(Collectors.toList());
     }
 
-    //TODO cambiare eccezione
     @Override
     public void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk) {
         Optional<Team> teamOpt = teamRepository.findById(teamId);
@@ -440,7 +436,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamOpt.get();
 
         if(!team.getCourse().getName().equals(name))
-            throw new RuntimeException();
+            throw new TeamNotFoundException();
 
         Optional<Course> courseOpt = courseRepository.findById(name);
         if( !courseOpt.isPresent())
@@ -453,7 +449,7 @@ public class TeamServiceImpl implements TeamService {
             throw new DocenteHasNotPrivilegeException();
 
         if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBdisk)
-            throw new RuntimeException();
+            throw new TooManyResourcesUsedException();
 
         team.setVcpuTot(vcpus);
         team.setGBDiskTot(GBdisk);
@@ -693,12 +689,9 @@ public class TeamServiceImpl implements TeamService {
             throw new TaskNotFoundException();
         }
         Task task = taskOpt.get();
-        Optional<Essay> essayOpt = task.getEssays().stream()
-                .filter(e-> e.getId().equals(essayId))
-                .findFirst();
-        if (!essayOpt.isPresent())
+        if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))
             throw new EssayNotFoundException();
-        Essay essay = essayOpt.get();
+        Essay essay = essayRepository.getOne(essayId);
 
         if(essay.getStato().equals(Essay.stati.Terminato))
             throw new EssayNotModifiableException();

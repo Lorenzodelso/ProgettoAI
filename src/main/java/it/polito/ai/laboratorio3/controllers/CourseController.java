@@ -18,6 +18,7 @@ import javax.persistence.Lob;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +211,7 @@ public class CourseController {
         }
     }
 
-    //TODO mancano delle eccezioni
+
     @PutMapping("/{name}/teams/{teamId}")
     public void changeVmsLimit(@PathVariable String name, @PathVariable String teamId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data) {
         int vcpus, GBram, GBdisk;
@@ -222,6 +223,8 @@ public class CourseController {
             teamService.changeVmsLimit(name, Long.valueOf(teamId), userDetails.getUsername(), vcpus, GBram, GBdisk);
         } catch (TeamNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (TooManyResourcesUsedException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

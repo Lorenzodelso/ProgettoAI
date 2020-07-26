@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -96,6 +97,15 @@ public class TeamServiceImpl implements TeamService {
         if (studentRepository.existsById(studentClass.getId()))
             return false;
         studentRepository.save(studentClass);
+        return true;
+    }
+
+    @Override
+    public boolean addProfessor(ProfessorDTO professor) {
+        Docente docente = modelMapper.map(professor,Docente.class);
+        if (docenteRepository.existsById(docente.getId()))
+            return false;
+        docenteRepository.save(docente);
         return true;
     }
 

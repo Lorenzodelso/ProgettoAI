@@ -10,18 +10,13 @@ import java.util.List;
 @Data
 public class Essay {
 
-    public enum stati {Letto, Consegnato, Rivisto}
+    public enum stati {Letto, Consegnato, Rivisto, Terminato}
 
     @Id
     @GeneratedValue
     private Long id;
-    private boolean modificabile;
-    private int voto;
+    private Long voto;
     private stati stato;
-
-    //TODO per ora i dati contenuti nell'essay sono banalmente una stringa
-    // concordare come mappare i dati di una consegna anche lato client (magari un file?)
-    private String data;
 
     @OneToMany(mappedBy = "essay")
     private List<Image> images = new ArrayList<>();
@@ -41,6 +36,11 @@ public class Essay {
     public void setTask(Task task){
         this.task = task;
         task.addEssay(this);
+    }
+
+    public void addImage(Image image){
+        images.add(image);
+        image.setEssay(this);
     }
 
 }

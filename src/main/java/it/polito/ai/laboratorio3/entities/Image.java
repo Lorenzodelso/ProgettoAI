@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Data
 public class Image {
     @Id
+    @GeneratedValue
     private String id;
     private String filename;
     private Timestamp creationDate;

@@ -6,9 +6,12 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class EssayDTO {
+
+    public enum stati {Letto, Consegnato, Rivisto, Terminato}
+
     private Long id;
-    private boolean modificabile;
     private int voto;
+    public stati stato;
 
     public EssayDTO(){}
 }

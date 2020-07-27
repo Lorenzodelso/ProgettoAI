@@ -4,9 +4,7 @@ import it.polito.ai.laboratorio3.dtos.*;
 import it.polito.ai.laboratorio3.entities.Docente;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
@@ -91,11 +89,17 @@ public interface TeamService {
     List<EssayDTO> getEssays(Long taskId);
 
     EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
-    EssayDTO loadEssay(Long taskId, Long essayId,String data, UserDetails userDetails);
+    EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<VmDTO> getVmsByStudent(String studentId, Long teamId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
-    VmDTO createVm(String id, Long teamId, VmDTO dto);
+    VmDTO createVm(String id, Long teamId, VmDTO dto, byte[] bytes);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     void switchVm(String id, Long teamId, Long vmId);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    void deleteVm(String id, Long teamId, Long vmId);
+
+    byte[] getImage(String id);
+
+    List<ImageDTO> getStorical(String name, Long taskId, Long essayId);
 }

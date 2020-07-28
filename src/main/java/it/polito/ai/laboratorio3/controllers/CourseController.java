@@ -247,15 +247,18 @@ public class CourseController {
     }
 
     @PostMapping("/{name}/task")
-    public TaskDTO createTask(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data) {
+    public TaskDTO createTask(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data, @RequestBody MultipartFile taskImg) {
         if (!data.containsKey("days"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert filed days, duration of task");
         int days = data.get("days");
         if (days < 1)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration must be at least one day");
         try {
-            return teamService.createTask(name, userDetails.getUsername(), days);
-        } catch (CourseNotFoundException e) {
+            return teamService.createTask(name, userDetails.getUsername(), days, taskImg.getBytes());
+        } catch (IOException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
+        }
+        catch (CourseNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (DocenteHasNotPrivilegeException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());

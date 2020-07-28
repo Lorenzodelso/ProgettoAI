@@ -16,6 +16,8 @@ public class Task {
     private Long id;
     Timestamp dataRilascio;
     Timestamp dataScadenza;
+    @Lob
+    private byte[] describe;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Course course;

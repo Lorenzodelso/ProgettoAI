@@ -10,12 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.io.Reader;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -517,7 +514,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TaskDTO createTask(String name, String username, int days) {
+    public TaskDTO createTask(String name, String username, int days, byte[] bytes) {
 
         Optional<Course> courseOpt = courseRepository.findById(name);
         if( !courseOpt.isPresent())
@@ -532,6 +529,8 @@ public class TeamServiceImpl implements TeamService {
         Task task = new Task();
         task.setDataRilascio(Timestamp.from(Instant.now()));
         task.setDataScadenza(Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS)));
+
+        task.setDescribe(bytes);
 
         task.setCourse(course);
         task = taskRepository.save(task);

@@ -136,6 +136,16 @@ VmDTO:
                 "GBram" -> int
                 "GBdisk" -> int )
 
+/***************/
+
+TaskDTO:
+         Long id;
+         Timestamp dataRilascio;
+         Timestamp dataScadenza;
+         byte [] describe;
+
+/***************/
+
 /API/courses/{name}/tasks (GET all tasks for a course)
 /API/courses/{name}/tasks (POST create a new task)
     ( Parametri della richiesta:

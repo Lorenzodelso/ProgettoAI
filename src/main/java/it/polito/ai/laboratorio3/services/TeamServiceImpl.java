@@ -152,6 +152,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    //TODO solo l'owner del corso può abilitare e disabilitare il corso
     public void enableCourse(String courseName) {
         if (!courseRepository.findById(courseName).isPresent())
             throw new CourseNotFoundException();

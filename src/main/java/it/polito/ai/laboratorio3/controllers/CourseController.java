@@ -172,7 +172,7 @@ public class CourseController {
         }
     }
 
-    @PutMapping("/{name}/{studentId}")
+    @PutMapping("/{name}/unsubscribeOne/{studentId}")
     public void updateCourseStudent(@PathVariable String name, @PathVariable String studentId, @AuthenticationPrincipal UserDetails userDetails) {
         try {
             teamService.unsubscribeOne(name, studentId, userDetails.getUsername());

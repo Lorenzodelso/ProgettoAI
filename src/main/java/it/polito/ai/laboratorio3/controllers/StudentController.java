@@ -43,6 +43,7 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,studentId);
     }
 
+    //TODO da eliminare
     @PostMapping({"","/"})
     public StudentDTO addStudent(@RequestBody StudentDTO studentDTO, @RequestBody MultipartFile studentImg){
         try {

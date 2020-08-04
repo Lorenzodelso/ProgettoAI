@@ -1,0 +1,62 @@
+<mat-toolbar class="T1"><mat-icon (click)=toggleForMenuClick()>menu</mat-icon>  
+  <a routerLink="/home" routerLinkActive="active">Virtual Labs</a>
+  <span class="example-fill-remaining-space"></span>
+  
+  <div class="example-label">
+    <!-- <button class="LogButton" mat-button (click)="openDialog()"> Login </button> -->
+    <button *ngIf="!authService.loggedin" class="LogButton" mat-button routerLink="/home" routerLinkActive="active" [queryParams]="{doLogin: true}"> Login</button>
+    <button *ngIf="authService.loggedin" class="LogButton" mat-button (click)="logout()"> Logout </button>
+  </div>
+<!-- routerLink="/home" [queryParams]="{doLogin: true}" 
+      <button *ngIf="!authService.loggedin" class="LogButton" mat-button> <a routerLink="/home" routerLinkActive="active" [queryParams]="{doLogin: true}"> Login</a></button>
+
+<button *ngIf="!authService.loggedin" class="LogButton" mat-button (click)="openDialog()"> Login </button>
+-->
+
+</mat-toolbar>
+
+<mat-toolbar class="T2">Applicazioni Internet</mat-toolbar>
+
+<mat-sidenav-container>
+
+    <!-- SIDENAV -->
+  <mat-sidenav #sidenav mode="side" opened position="start">
+    
+    <div class="container-small"> 
+      <mat-nav-list>
+        <mat-list-item><a routerLink="teacher/courses/applicazioni-internet/students" routerLinkActive="active">Applicazioni internet</a>  </mat-list-item>
+        <mat-list-item><a routerLink="" routerLinkActive="active"> Programmazione sistema </a></mat-list-item>
+        <mat-list-item><a routerLink="" routerLinkActive="active"> Sicurezza </a></mat-list-item>
+        <mat-list-item><a routerLink="" routerLinkActive="active"> Software Networking </a></mat-list-item>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  
+  <!-- CONTENT -->
+  <mat-sidenav-content>
+    <nav mat-tab-nav-bar >
+      <a routerLink="teacher/courses/applicazioni-internet/students"
+      mat-tab-link label="Studenti"> 
+          Studenti
+      </a>
+
+      <a routerLink=""
+      mat-tab-link label="Gruppi"> 
+        Gruppi
+      </a>
+
+      <a routerLink="teacher/courses/applicazioni-internet/vms"
+      mat-tab-link label="vms"> 
+          VMs
+      </a>
+    </nav>
+
+
+    
+
+    <router-outlet></router-outlet>
+    
+  </mat-sidenav-content>
+ 
+
+</mat-sidenav-container>

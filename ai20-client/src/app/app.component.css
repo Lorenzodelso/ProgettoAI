@@ -1,0 +1,68 @@
+
+
+    .mat-toolbar {
+      margin-left: 5px;
+      background: slateblue;
+    }
+
+    .T1 {
+      background: #2b4de2;
+    }
+
+    .T2 {
+      background: #e7e0e0b0;
+
+    }
+
+
+    mat-icon {
+      margin-right: 4px;
+      cursor: pointer;
+      
+    }
+    mat-icon:hover{
+      background: #4f69dd;
+    ;
+    }
+
+
+
+    mat-sidenav {
+      min-width: 10% ;
+      max-width: max-content;
+      border-right-color: #3d5ef1;
+    }
+
+
+    mat-sidenav-content {
+      background: #e7e0e0b0;
+    }
+
+    .example-fill-remaining-space {
+      /* This fills the remaining space, by using flexbox. 
+         Every toolbar row uses a flexbox row layout. */
+      flex: 1 1 auto;
+    }
+
+    .example-label {
+      font-size: 14px;
+      margin-left: 8px;
+      width: 120px;
+    }
+
+    .mat-button.LogButton {
+      color: whitesmoke;
+    }
+    
+    .mat-button.LogButton:hover {
+      background-color: #11257c;
+    }
+    /*
+    .mat-stroked-button.mat-success {
+    color: #155724;
+    }
+
+
+
+    
+    */

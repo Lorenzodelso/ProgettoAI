@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>LOGIN</h2>
+<mat-dialog-content class="mat-login">
+    <form #loginform class="loginform" autocomplete="off" [formGroup]="form">
+        <section>
+            <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>  
+            <input matInput type="email" placeholder="Ex. namesurname@mail.com" formControlName="email" required>
+            <mat-error *ngIf="email.invalid"> {{getErrorEmailMessage()}} </mat-error>
+            </mat-form-field>
+            <br>
+            <br>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>  
+                <input matInput type="password" placeholder="Ex. mypassword" formControlName="password" required>
+                <mat-error *ngIf="password.invalid"> {{getErrorPasswordMessage()}} </mat-error>
+            </mat-form-field>
+            <br>
+            <br>
+                <button mat-raised-button color="primary" (click)="login()">Login</button>
+                <button mat-raised-button style="margin-left: 20px;" color="warn" mat-dialog-close>Cancel</button>
+                <br>
+                <mat-error style="padding-top: 15px;"> {{myError}} </mat-error>
+            <br>
+
+
+        </section>
+    </form>
+</mat-dialog-content>
+

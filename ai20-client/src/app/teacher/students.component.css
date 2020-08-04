@@ -1,0 +1,45 @@
+table {
+    width: 100%;
+  }
+
+  .mat-column-select {
+    overflow: initial;
+  }
+  
+
+
+    .addstudentform {
+      margin-top: 8px;
+      margin-left: 12px;
+      min-width: 150px;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .studform-width {
+      width: 100%;
+    }
+
+    table {
+      background: rgb(255, 255, 255);
+      
+    }
+
+    .addButton {
+      position: absolute;
+      margin-left: 10px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .deleteButton {
+      margin-bottom: 1%;
+      cursor: pointer;
+    }
+    
+
+    .button-row button{
+      margin-top: 8px;
+      font-size: 16px;
+      margin-left: 12px;     
+      }

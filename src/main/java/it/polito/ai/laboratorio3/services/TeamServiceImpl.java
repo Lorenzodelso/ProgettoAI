@@ -695,6 +695,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<ProfessorDTO> getAllProfessor() {
+        return docenteRepository.findAll()
+                .stream()
+                .map(p -> modelMapper.map(p,ProfessorDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto) {
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if ( !taskOpt.isPresent()){

@@ -101,4 +101,6 @@ public interface TeamService {
     byte[] getImage(String id);
 
     List<ImageDTO> getStorical(String name, Long taskId, Long essayId);
+
+    List<ProfessorDTO> getAllProfessor();
 }

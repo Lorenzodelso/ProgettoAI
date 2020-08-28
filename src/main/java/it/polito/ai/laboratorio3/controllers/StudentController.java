@@ -44,7 +44,7 @@ public class StudentController {
     }
 
     //TODO da eliminare
-    @PostMapping({"","/"})
+   /* @PostMapping({"","/"})
     public StudentDTO addStudent(@RequestBody StudentDTO studentDTO, @RequestBody MultipartFile studentImg){
         try {
             if (teamService.addStudent(studentDTO, studentImg.getBytes()))
@@ -53,7 +53,7 @@ public class StudentController {
         }catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Errore caricamento immagine!");
         }
-    }
+    }/*/
 
     @GetMapping("/{id}/courses")
     public List<CourseDTO> getCoursesForStudent(@PathVariable String id){

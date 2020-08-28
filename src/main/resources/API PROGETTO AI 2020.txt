@@ -181,3 +181,10 @@ Gruppo:
     (no params)
 /API/students/{id}/teams/{teamid}/vms/{vMId} (DELETE cancella una vm e libera spazio dal gruppo)
 
+Docenti:
+/API/professors (GET all professors)
+
+ProfessorDTO:
+         private String id;
+         private String name;
+         private String firstName;

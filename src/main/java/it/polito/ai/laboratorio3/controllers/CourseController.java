@@ -4,6 +4,7 @@ import it.polito.ai.laboratorio3.dtos.*;
 import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.services.NotificationService;
 import it.polito.ai.laboratorio3.services.TeamService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -60,13 +61,7 @@ public class CourseController {
     }
 
     @PostMapping({"", "/"})
-    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails) {
-
-        List<String> ids = new ArrayList<>();
-
-       // if (data.containsKey("docids"))
-        //    ids = (List<String>) data.get("docids");
-
+    public CourseDTO addCourse(@RequestParam("dto") CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails, @RequestParam("ids") List<String> ids) {
 
         if (!ids.contains(userDetails.getUsername()))
             ids.add(userDetails.getUsername());

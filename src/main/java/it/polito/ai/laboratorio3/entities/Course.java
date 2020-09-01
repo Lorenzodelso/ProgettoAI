@@ -35,7 +35,8 @@ public class Course {
     }
 
     public void addDocente (Docente docente){
-        docenti.add(docente);
+        if(!docenti.contains(docente))
+            docenti.add(docente);
         docente.addCourse(this);
     }
 

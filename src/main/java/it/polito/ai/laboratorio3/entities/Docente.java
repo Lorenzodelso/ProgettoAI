@@ -27,7 +27,6 @@ public class Docente{
 
     public void addCourse(Course course){
         courses.add(course);
-        course.getDocenti().add(this);
     }
 
 }

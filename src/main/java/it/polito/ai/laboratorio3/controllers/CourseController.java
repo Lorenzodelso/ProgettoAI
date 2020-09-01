@@ -60,16 +60,17 @@ public class CourseController {
     }
 
     @PostMapping({"", "/"})
-    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Object> data) {
+    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails) {
 
         List<String> ids = new ArrayList<>();
 
-        if (data.containsKey("docids"))
-            ids = (List<String>) data.get("docids");
+       // if (data.containsKey("docids"))
+        //    ids = (List<String>) data.get("docids");
+
 
         if (!ids.contains(userDetails.getUsername()))
             ids.add(userDetails.getUsername());
-
+            System.out.println(userDetails.getUsername());
         if (teamService.addCourse(courseDTO, ids))
             return enrich(courseDTO);
         else throw new ResponseStatusException(HttpStatus.CONFLICT, courseDTO.getName());

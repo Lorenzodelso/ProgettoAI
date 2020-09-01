@@ -25,9 +25,6 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-    @NotEmpty
     private String username;
     @NotEmpty
     private String password;

@@ -36,7 +36,7 @@ public class Course {
 
     public void addDocente (Docente docente){
         docenti.add(docente);
-        docente.getCourses().add(this);
+        docente.addCourse(this);
     }
 
     public void addTeam(Team team){

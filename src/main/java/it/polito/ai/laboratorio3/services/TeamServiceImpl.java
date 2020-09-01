@@ -530,7 +530,7 @@ public class TeamServiceImpl implements TeamService {
         task.setDataRilascio(Timestamp.from(Instant.now()));
         task.setDataScadenza(Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS)));
 
-        task.setDescribe(bytes);
+        task.setDescription(bytes);
 
         task.setCourse(course);
         task = taskRepository.save(task);

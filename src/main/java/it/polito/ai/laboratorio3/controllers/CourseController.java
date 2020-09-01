@@ -5,6 +5,7 @@ import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.services.NotificationService;
 import it.polito.ai.laboratorio3.services.TeamService;
 import net.minidev.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,9 @@ import static it.polito.ai.laboratorio3.controllers.ModelHelper.enrich;
 @RestController
 @RequestMapping("/API/courses")
 public class CourseController {
+    @Autowired
+    ModelMapper modelMapper;
+
     @Autowired
     TeamService teamService;
 
@@ -61,7 +65,14 @@ public class CourseController {
     }
 
     @PostMapping({"", "/"})
-    public CourseDTO addCourse(@RequestParam("dto") CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails, @RequestParam("ids") List<String> ids) {
+    public CourseDTO addCourse(@RequestBody Map<String, Object> requestBody, @AuthenticationPrincipal UserDetails userDetails) {
+        CourseDTO courseDTO = new CourseDTO();
+        List<String> ids = new ArrayList<>();
+        if(requestBody.containsKey("courseDTO"))
+           courseDTO = modelMapper.map(requestBody.get("courseDTO"),CourseDTO.class);
+
+        if(requestBody.containsKey("ids"))
+            ids = (List<String>) requestBody.get("ids");
 
         if (!ids.contains(userDetails.getUsername()))
             ids.add(userDetails.getUsername());

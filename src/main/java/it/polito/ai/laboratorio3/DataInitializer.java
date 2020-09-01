@@ -50,6 +50,17 @@ public class DataInitializer implements CommandLineRunner {
 
             teamService.addProfessor(new ProfessorDTO("d1","giovanni","malnati"));
         }
+
+        if(!users.existsById("d2")) {
+            this.users.save(User.builder()
+                    .username("d2")
+                    .password(this.passwordEncoder.encode("cabodipsw"))
+                    .roles(Arrays.asList("ROLE_PROFESSOR"))
+                    .build()
+            );
+
+            teamService.addProfessor(new ProfessorDTO("d2","gianpiero","cabodi"));
+        }
         log.debug("printing all users...");
         this.users.findAll().forEach(v -> log.debug(" User :" + v.toString()));
     }

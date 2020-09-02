@@ -1,6 +1,9 @@
 package it.polito.ai.laboratorio3.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.print.Doc;
@@ -9,6 +12,9 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Course {
     @Id
     private String name;

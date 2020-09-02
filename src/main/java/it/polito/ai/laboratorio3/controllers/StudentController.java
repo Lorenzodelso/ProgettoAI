@@ -74,7 +74,7 @@ public class StudentController {
         return tokens;
     }
 
-    @GetMapping("/{id}/teams/{teamid}/vms")
+    @GetMapping("/{id}/teams/{teamId}/vms")
     public List<VmDTO> getVms (@PathVariable String id, @PathVariable String teamId){
         try {
             return teamService.getVmsByStudent(id, Long.valueOf(teamId));
@@ -84,7 +84,7 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/{id}/teams/{teamid}/vm")
+    @PostMapping("/{id}/teams/{teamId}/vm")
     public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm, @AuthenticationPrincipal UserDetails userDetails){
 
         if(!id.equals(userDetails.getUsername()))

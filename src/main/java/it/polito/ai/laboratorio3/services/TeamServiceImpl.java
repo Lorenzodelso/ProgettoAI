@@ -612,6 +612,7 @@ public class TeamServiceImpl implements TeamService {
         vm.setGBRam(dto.getGBRam());
         vm.setVcpu(dto.getVcpu());
         vm.setScreenVm(bytes);
+        vm.setTeam(team);
         vm = vmRepository.save(vm);
         vm.addOwner(student);
         return modelMapper.map(vm,VmDTO.class);

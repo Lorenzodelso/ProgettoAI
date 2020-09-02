@@ -1,6 +1,9 @@
 package it.polito.ai.laboratorio3.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +11,9 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Vm {
 
     public enum stati {Accesa, Spenta}
@@ -27,7 +33,7 @@ public class Vm {
     //il corso lo prende dal team
 
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    @JoinTable(name = "students_vms",joinColumns = @JoinColumn(name = "student_id"),inverseJoinColumns = @JoinColumn(name = "vm_id"))
+    @JoinTable(name = "students_vms",joinColumns = @JoinColumn(name = "vm_id"),inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> owners = new ArrayList<>();
 
     public void addOwner( Student student){

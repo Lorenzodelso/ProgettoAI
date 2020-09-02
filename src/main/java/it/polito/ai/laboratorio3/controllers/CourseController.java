@@ -160,18 +160,23 @@ public class CourseController {
     }
 
     @PutMapping("/{name}")
-    public CourseDTO updateCourse(@PathVariable String name, @RequestBody CourseDTO dto, @RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails) {
+    public CourseDTO updateCourse(@PathVariable String name, @RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails) {
 
+        CourseDTO courseDTO = new CourseDTO();
         List<String> ids = new ArrayList<>();
+        if(data.containsKey("courseDTO"))
+            courseDTO = modelMapper.map(data.get("courseDTO"),CourseDTO.class);
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field courseDTO");
 
-        if (data.containsKey("docids"))
-            ids = (List<String>) data.get("docids");
+        if(data.containsKey("ids"))
+            ids = (List<String>) data.get("ids");
 
         if (!ids.contains(userDetails.getUsername()))
             ids.add(userDetails.getUsername());
 
         try {
-            return teamService.updateCourse(name, dto, ids);
+            return teamService.updateCourse(name, courseDTO, ids);
         } catch (CourseNotFoundException | DocenteNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (DocenteHasNotPrivilegeException e) {
@@ -254,14 +259,21 @@ public class CourseController {
     }
 
     @PostMapping("/{name}/task")
-    public TaskDTO createTask(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data, @RequestBody MultipartFile taskImg) {
+    public TaskDTO createTask(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Object> data) {
         if (!data.containsKey("days"))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert filed days, duration of task");
-        int days = data.get("days");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field days, duration of task");
+
+        if (!data.containsKey("file"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field file, test of the task");
+
+        int days = (Integer) data.get("days");
         if (days < 1)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration must be at least one day");
+
+        MultipartFile file = (MultipartFile) data.get("file");
+
         try {
-            return teamService.createTask(name, userDetails.getUsername(), days, taskImg.getBytes());
+            return teamService.createTask(name, userDetails.getUsername(), days, file.getBytes());
         } catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
         }
@@ -301,18 +313,22 @@ public class CourseController {
     }
 
     @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}")
-    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId,@RequestBody MultipartFile data, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String,String> option){
-        Long voto;
+    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String,Object> option){
+        Long voto = Long.valueOf("-1");
+        if(!option.containsKey("file"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field file");
+
+        MultipartFile file = (MultipartFile) option.get("file");
+
         if(option.containsKey("voto"))
-            voto = Long.valueOf(option.get("voto"));
-        else
-            voto = Long.valueOf("-1");
+            voto = Long.valueOf((String) option.get("voto"));
+
         if(voto.intValue() > 31)
             voto = Long.valueOf("31");
         if(voto.intValue() < 18)
             voto = Long.valueOf("17");
         try{
-            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), data.getBytes(), userDetails, voto);
+            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), file.getBytes(), userDetails, voto);
         } catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
         }

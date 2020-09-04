@@ -37,6 +37,8 @@ public class Team {
     private int vcpuUsati;
     private int GBDiskUsati;
     private int GBRamUsati;
+    private int maxVmAccese;
+    private int vmAccese;
 
     @OneToMany(mappedBy = "team")
     private List<Vm> vms = new ArrayList<>();

@@ -25,6 +25,7 @@ public class Vm {
     private int GBDisk;
     private int GBRam;
     private stati status;
+    private String idCreatore;
     @Lob
     private byte[] screenVm;
 

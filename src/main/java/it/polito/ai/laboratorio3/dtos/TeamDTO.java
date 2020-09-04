@@ -16,6 +16,8 @@ public class TeamDTO {
     private int vcpuUsati;
     private int GBDiskUsati;
     private int GBRamUsati;
+    private int maxVmAccese;
+    private int vmAccese;
 
     public TeamDTO(){}
 }

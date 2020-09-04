@@ -244,7 +244,7 @@ public class TeamServiceImpl implements TeamService {
         int countMembersMax = courseRepository.getOne(courseId).getMax();
         int countMembersMin = courseRepository.getOne(courseId).getMin();
         if (memberIds.size() > countMembersMax || memberIds.size() < countMembersMin)
-            throw new WrongTeamDimensionExcpetion("");
+            throw new WrongTeamDimensionExcpetion();
         memberIds.stream()
                 .forEach( memberId -> {
                     List<CourseDTO> courses = getCourses(memberId);
@@ -254,7 +254,7 @@ public class TeamServiceImpl implements TeamService {
                     List<TeamDTO> teams = getTeamsForStudent(memberId);
                     long flag = teams.stream()
                             .map(team -> modelMapper.map(team, Team.class))
-                            .filter(team -> team.getCourse().getName()==courseId)
+                            .filter(team -> team.getCourse().getName().equals(courseId))
                             .count();
                     if (flag > 0)
                         throw new TeamAlreadyInCourseException();
@@ -270,6 +270,16 @@ public class TeamServiceImpl implements TeamService {
         memberIds.stream().forEach(memberId -> {
             team.addMember(studentRepository.getOne(memberId));
         });
+
+        team.setMaxVmAccese(4);
+        team.setVmAccese(0);
+        team.setVcpuUsati(0);
+        team.setGBRamUsati(0);
+        team.setGBDiskUsati(0);
+        team.setGBRamTot(8);
+        team.setGBDiskTot(250);
+        team.setVcpuTot(4);
+
         teamRepository.save(team);
 
         return modelMapper.map(team,TeamDTO.class);
@@ -438,7 +448,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk) {
+    public void changeVmsLimit(String name, Long teamId, String username, int vcpus, int GBram, int GBdisk, int maxAccese) {
         Optional<Team> teamOpt = teamRepository.findById(teamId);
         if( !teamOpt.isPresent())
             throw  new TeamNotFoundException();
@@ -457,12 +467,16 @@ public class TeamServiceImpl implements TeamService {
                 .count() < 1)
             throw new DocenteHasNotPrivilegeException();
 
-        if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBdisk)
+        if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBdisk || maxAccese < team.getVmAccese())
             throw new TooManyResourcesUsedException();
-
-        team.setVcpuTot(vcpus);
-        team.setGBDiskTot(GBdisk);
+        if(vcpus != -1)
+            team.setVcpuTot(vcpus);
+        if(GBdisk != -1)
+            team.setGBDiskTot(GBdisk);
+        if(GBram != -1)
         team.setGBRamTot(GBram);
+        if(maxAccese != -1)
+        team.setMaxVmAccese(maxAccese);
     }
 
     @Override
@@ -607,7 +621,13 @@ public class TeamServiceImpl implements TeamService {
             throw new InsufficientResourcesException();
 
         Vm vm = new Vm();
-        vm.setStatus(Vm.stati.Accesa);
+        if (team.getVmAccese() < team.getMaxVmAccese()){
+            vm.setStatus(Vm.stati.Accesa);
+            team.setVmAccese(team.getVmAccese()+1);
+        }
+        else
+            vm.setStatus(Vm.stati.Spenta);
+
         vm.setGBDisk(dto.getGBDisk());
         vm.setGBRam(dto.getGBRam());
         vm.setVcpu(dto.getVcpu());
@@ -615,6 +635,7 @@ public class TeamServiceImpl implements TeamService {
         vm.setTeam(team);
         vm = vmRepository.save(vm);
         vm.addOwner(student);
+        vm.setIdCreatore(id);
         return modelMapper.map(vm,VmDTO.class);
     }
 
@@ -638,10 +659,16 @@ public class TeamServiceImpl implements TeamService {
         if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
             throw new StudentHasNotPrivilegeException();
 
-        if(vm.getStatus().equals(Vm.stati.Accesa))
+        if(vm.getStatus().equals(Vm.stati.Accesa)) {
             vm.setStatus(Vm.stati.Spenta);
-        else
+            team.setVmAccese(team.getVmAccese()-1);
+        }
+        else {
+            if(team.getMaxVmAccese() == team.getVmAccese())
+                throw new MaxVmAcceseException();
+            else
             vm.setStatus(Vm.stati.Accesa);
+        }
     }
 
     @Override

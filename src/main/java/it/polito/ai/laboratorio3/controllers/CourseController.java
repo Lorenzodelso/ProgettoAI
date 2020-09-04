@@ -162,7 +162,7 @@ public class CourseController {
     @PutMapping("/{name}")
     public CourseDTO updateCourse(@PathVariable String name, @RequestBody Map<String, Object> data, @AuthenticationPrincipal UserDetails userDetails) {
 
-        CourseDTO courseDTO = new CourseDTO();
+        CourseDTO courseDTO;
         List<String> ids = new ArrayList<>();
         if(data.containsKey("courseDTO"))
             courseDTO = modelMapper.map(data.get("courseDTO"),CourseDTO.class);
@@ -226,18 +226,20 @@ public class CourseController {
 
     @PutMapping("/{name}/teams/{teamId}")
     public void changeVmsLimit(@PathVariable String name, @PathVariable String teamId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data) {
-        int vcpus, GBram, GBdisk;
+        int vcpus, GBram, GBdisk, maxAccese;
         vcpus = data.getOrDefault("vcpus", -1);
         GBram = data.getOrDefault("gbram", -1);
         GBdisk = data.getOrDefault("gbdisk", -1);
+        maxAccese = data.getOrDefault("maxaccese", -1);
 
         try {
-            teamService.changeVmsLimit(name, Long.valueOf(teamId), userDetails.getUsername(), vcpus, GBram, GBdisk);
+            teamService.changeVmsLimit(name, Long.valueOf(teamId), userDetails.getUsername(), vcpus, GBram, GBdisk, maxAccese);
         } catch (TeamNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (TooManyResourcesUsedException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+
     }
 
     @GetMapping("/{name}/tasks")

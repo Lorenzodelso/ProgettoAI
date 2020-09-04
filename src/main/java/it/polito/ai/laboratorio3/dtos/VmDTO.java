@@ -14,6 +14,7 @@ public class VmDTO {
     private int GBDisk;
     private int GBRam;
     private Vm.stati status;
+    private String idCreatore;
 
     public VmDTO(){}
 }

@@ -4,6 +4,7 @@ import it.polito.ai.laboratorio3.dtos.*;
 import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.apache.coyote.Response;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -16,7 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static it.polito.ai.laboratorio3.controllers.ModelHelper.enrich;
@@ -26,6 +29,8 @@ import static it.polito.ai.laboratorio3.controllers.ModelHelper.enrich;
 public class StudentController {
     @Autowired
     TeamService teamService;
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping({"","/"})
     public List<StudentDTO> all(){
@@ -85,13 +90,26 @@ public class StudentController {
     }
 
     @PostMapping("/{id}/teams/{teamId}/vm")
-    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody VmDTO dto, @RequestBody MultipartFile screenVm, @AuthenticationPrincipal UserDetails userDetails){
+    public VmDTO createVm (@PathVariable String id, @PathVariable String teamId, @RequestBody Map<String,Object> data, @AuthenticationPrincipal UserDetails userDetails){
 
         if(!id.equals(userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must create a vm with your Id");
 
+        VmDTO dto;
+        MultipartFile file;
+
+        if(data.containsKey("dto"))
+            dto = modelMapper.map(data.get("dto"),VmDTO.class);
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field vmdto");
+
+        if (data.containsKey("screenvm"))
+            file = (MultipartFile) data.get("screenvm");
+        else
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field screenvm");
+
         try {
-            return teamService.createVm(id, Long.valueOf(teamId), dto, screenVm.getBytes());
+            return teamService.createVm(id, Long.valueOf(teamId), dto, file.getBytes());
         }
         catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Errore caricamento Vm");
@@ -132,6 +150,8 @@ public class StudentController {
         }
         catch (StudentNotFoundException | TeamNotFoundException | VmNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        } catch (MaxVmAcceseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

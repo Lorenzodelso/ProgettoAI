@@ -176,7 +176,7 @@ Gruppo:
 /API/students/{id}/teams/{teamid}/vms (POST new VM for a course and a student)
     ( Parametri della richiesta:
                             "dto" -> VmDTO
-                            "screenVm" -> MultipartFile immagine della vm )
+                            "screenvm" -> MultipartFile immagine della vm )
 /API/students/{id}/teams/{teamid}/vms/{vMId}/switch (POST with new status: accensione, spegnimento, cancellazione)
     (no params)
 /API/students/{id}/teams/{teamid}/vms/{vMId} (DELETE cancella una vm e libera spazio dal gruppo)

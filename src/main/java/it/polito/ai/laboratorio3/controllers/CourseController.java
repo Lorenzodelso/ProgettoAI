@@ -82,7 +82,7 @@ public class CourseController {
         else throw new ResponseStatusException(HttpStatus.CONFLICT, courseDTO.getName());
     }
 
-    @PostMapping({"/{name}/enrollOne"})
+    @PostMapping({"/{courseName}/enrollOne"})
     public StudentDTO enrollOne(@PathVariable String courseName, @RequestBody StudentDTO studentDTO) {
         try {
             teamService.addStudentToCourse(studentDTO.getId(), courseName);

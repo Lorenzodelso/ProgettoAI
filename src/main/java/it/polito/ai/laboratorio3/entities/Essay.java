@@ -17,6 +17,7 @@ public class Essay {
     private Long id;
     private Long voto;
     private stati stato;
+    private String idStudente;
 
     @OneToMany(mappedBy = "essay")
     private List<Image> images = new ArrayList<>();

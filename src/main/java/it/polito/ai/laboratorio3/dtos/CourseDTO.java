@@ -12,6 +12,10 @@ public class CourseDTO extends RepresentationModel<CourseDTO> {
     private int max;
     private boolean enabled;
 
+    private int modelVM_cpu;
+    private int modelVM_GBDisk;
+    private int modelVM_GBRam;
+
     public CourseDTO(){}
 
 }

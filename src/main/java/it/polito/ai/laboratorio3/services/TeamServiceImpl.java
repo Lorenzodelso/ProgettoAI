@@ -745,6 +745,7 @@ public class TeamServiceImpl implements TeamService {
 
         if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
             essay.setStato(Essay.stati.Consegnato);
+            essay.setIdStudente(userDetails.getUsername());
         }else{
             if (userDetails.getAuthorities().contains(("ROLE_PROFESSOR"))){
 

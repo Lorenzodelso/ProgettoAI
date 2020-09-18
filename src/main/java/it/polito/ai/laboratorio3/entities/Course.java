@@ -22,6 +22,10 @@ public class Course {
     private int max;
     private boolean enabled;
 
+    private int modelVM_cpu;
+    private int modelVM_GBDisk;
+    private int modelVM_GBRam;
+
     @ManyToMany(mappedBy = "courses")
     private List<Student> students = new ArrayList<>();
 

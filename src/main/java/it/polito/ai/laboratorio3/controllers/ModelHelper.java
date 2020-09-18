@@ -1,6 +1,7 @@
 package it.polito.ai.laboratorio3.controllers;
 
 import it.polito.ai.laboratorio3.dtos.CourseDTO;
+import it.polito.ai.laboratorio3.dtos.EssayDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.dtos.TeamDTO;
 
@@ -23,5 +24,7 @@ public class ModelHelper {
                 .add(linkTo(CourseController.class).slash(courseDTO.getName()+"/alreadyInTeamStudents").withRel("alreadyInTeamStudents"))
                 .add(linkTo(CourseController.class).slash(courseDTO.getName()+"/tasks").withRel("tasks"));
     }
+
+
 
 }

@@ -12,6 +12,7 @@ public class EssayDTO {
     private Long id;
     private int voto;
     public stati stato;
+    private String idStudente;
 
     public EssayDTO(){}
 }

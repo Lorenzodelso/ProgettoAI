@@ -382,15 +382,19 @@ public class TeamServiceImpl implements TeamService {
         course.setName(dto.getName());
         course.setMax(dto.getMax());
         course.setMin(dto.getMin());
+        course.setModelVM_cpu(dto.getModelVM_cpu());
+        course.setModelVM_GBDisk(dto.getModelVM_GBDisk());
+        course.setModelVM_GBRam(dto.getModelVM_GBRam());
 
-        List<Docente> doc = new ArrayList<>();
+        Docente doc;
+
         for(String d: ids){
-            Optional<Docente> docOpt = docenteRepository.findById(d);
-            if( !docOpt.isPresent())
-                throw new DocenteNotFoundException();
-            doc.add(docOpt.get());
+           if(!docenteRepository.existsById(d))
+               throw new DocenteNotFoundException();
+           doc = docenteRepository.getOne(d);
+           doc.addCourse(course);
         }
-        course.setDocenti(doc);
+
         return dto;
     }
 

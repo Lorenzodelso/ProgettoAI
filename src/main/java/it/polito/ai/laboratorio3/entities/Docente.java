@@ -18,7 +18,7 @@ public class Docente{
     @Lob
     private byte[] photoDocente;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
     @JoinTable(name = "docente_course",joinColumns = @JoinColumn(name = "docente_id"),inverseJoinColumns = @JoinColumn(name = "course_name"))
     private List<Course> courses = new ArrayList<>();
 
@@ -26,8 +26,11 @@ public class Docente{
     List<Task> tasks = new ArrayList<>();
 
     public void addCourse(Course course){
-        if(!courses.contains(course))
-            courses.add(course);
+        if(courses.contains(course))
+            return;
+        
+        courses.add(course);
+        course.addDocente(this);
     }
 
 }

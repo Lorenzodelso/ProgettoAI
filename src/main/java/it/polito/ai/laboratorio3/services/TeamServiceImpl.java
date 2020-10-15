@@ -9,9 +9,12 @@ import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.io.Reader;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -531,7 +534,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TaskDTO createTask(String name, String username, int days, byte[] bytes) {
+    public TaskDTO createTask(String name, String username, int days) {
 
         Optional<Course> courseOpt = courseRepository.findById(name);
         if( !courseOpt.isPresent())
@@ -546,9 +549,6 @@ public class TeamServiceImpl implements TeamService {
         Task task = new Task();
         task.setDataRilascio(Timestamp.from(Instant.now()));
         task.setDataScadenza(Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS)));
-
-        task.setDescription(bytes);
-
         task.setCourse(course);
         task = taskRepository.save(task);
         course.addTask(task);
@@ -606,7 +606,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public VmDTO createVm(String id, Long teamId, VmDTO dto, byte[] bytes) {
+    public VmDTO createVm(String id, Long teamId, VmDTO dto) {
         if(!studentRepository.existsById(id))
             throw new StudentNotFoundException();
         Student student = studentRepository.getOne(id);
@@ -635,7 +635,6 @@ public class TeamServiceImpl implements TeamService {
         vm.setGBDisk(dto.getGBDisk());
         vm.setGBRam(dto.getGBRam());
         vm.setVcpu(dto.getVcpu());
-        vm.setScreenVm(bytes);
         vm.setTeam(team);
         vm = vmRepository.save(vm);
         vm.addOwner(student);
@@ -734,7 +733,95 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto) {
+    public StudentDTO uploadImageIntoStudent(MultipartFile file, String studentId) {
+        if(!studentRepository.existsById(studentId))
+            throw new StudentNotFoundException();
+        else {
+            Student student = studentRepository.getOne(studentId);
+            student.setPhotoStudent(fromFileToByteArray(file));
+            return modelMapper.map(student, StudentDTO.class);
+        }
+    }
+
+    @Override
+    public ProfessorDTO uploadImageIntoProfessor(MultipartFile imageFile, String professorId) {
+        if(!docenteRepository.existsById(professorId))
+            throw new DocenteNotFoundException();
+        else {
+            Docente docente = docenteRepository.getOne(professorId);
+            docente.setPhotoDocente(fromFileToByteArray(imageFile));
+            return modelMapper.map(docente, ProfessorDTO.class);
+        }
+    }
+
+    @Override
+    public void uploadPhotoIntoVm(String id, Long teamId, Long vmId, MultipartFile imageFile) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+        if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
+            throw new VmNotFoundException();
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException();
+        Vm vm = vmRepository.getOne(vmId);
+
+        if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
+            throw new StudentHasNotPrivilegeException();
+
+        vm.setScreenVm(fromFileToByteArray(imageFile));
+    }
+
+    @Override
+    public void uploadImageIntoTask(String name, Long taskId, UserDetails userDetails, MultipartFile imageFile) {
+        Optional<Course> courseOpt = courseRepository.findById(name);
+        if( !courseOpt.isPresent())
+            throw  new CourseNotFoundException();
+        Course course = courseOpt.get();
+        Optional<Task> taskOpt = course.getTasks().stream()
+                .filter(t-> t.getId().equals(taskId))
+                .findFirst();
+        if (!taskOpt.isPresent())
+            throw new TaskNotFoundException();
+        List<String> listDocenti = course.getDocenti().stream().map(docente -> docente.getId()).collect(Collectors.toList());
+        if (!listDocenti.contains(userDetails.getUsername())){
+            throw new DocenteHasNotPrivilegeException();
+        }
+        Task task = taskRepository.getOne(taskId);
+        task.setDescription(fromFileToByteArray(imageFile));
+    }
+
+    @Override
+    public void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto) {
+        if (voto>30L)
+            voto = 30L;
+        else if(voto<17L)
+            voto = 17L;
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+        if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))
+            throw new EssayNotFoundException();
+        Essay essay = essayRepository.getOne(essayId);
+        if (!task.getDocente().getId().equals(userDetails.getUsername()))
+            throw new DocenteHasNotPrivilegeException();
+        if(essay.getStato().equals(Essay.stati.Terminato))
+            throw new EssayNotModifiableException();
+        if (!essay.getStato().equals(Essay.stati.Consegnato))
+            throw new EssayNotLoadedByStudentException();
+        essay.setStato(Essay.stati.Terminato);
+        essay.setVoto(voto);
+    }
+
+    @Override
+    public EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails) {
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if ( !taskOpt.isPresent()){
             throw new TaskNotFoundException();
@@ -755,14 +842,7 @@ public class TeamServiceImpl implements TeamService {
 
                 if(!essay.getStato().equals(Essay.stati.Consegnato))
                     throw new EssayNotLoadedByStudentException();
-
-                if(voto.equals(Long.valueOf("-1"))){
-                    essay.setStato(Essay.stati.Rivisto);
-                    }
-                else{
-                    essay.setVoto(voto);
-                    essay.setStato(Essay.stati.Terminato);
-                }
+                essay.setStato(Essay.stati.Rivisto);
             }
         }
         Image image = new Image();
@@ -772,5 +852,23 @@ public class TeamServiceImpl implements TeamService {
         essay.addImage(image);
         return modelMapper.map(essay,EssayDTO.class);
     }
+
+    public byte[] fromFileToByteArray(MultipartFile file){
+        byte[] byteObjects = null;
+        try {
+            byteObjects = new byte[file.getBytes().length];
+            int i=0;
+            for (byte b : file.getBytes()){
+                byteObjects[i++] = b;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return byteObjects;
+    }
+
+
 
 }

@@ -60,6 +60,20 @@ public class StudentController {
         }
     }/*/
 
+   @PutMapping({"/{studentId}"})
+   public StudentDTO uploadImageForStudent(@RequestBody MultipartFile imageFile, @PathVariable String studentId, @AuthenticationPrincipal UserDetails userDetails){
+       try {
+           if (!studentId.equals(userDetails.getUsername())) {
+               throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Non hai i privilegi!");
+           } else {
+               return teamService.uploadImageIntoStudent(imageFile, studentId);
+           }
+       }catch (StudentNotFoundException e) {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       }
+   }
+
+
     @GetMapping("/{id}/courses")
     public List<CourseDTO> getCoursesForStudent(@PathVariable String id){
         List<CourseDTO> courseDTOS = teamService.getCourses(id);
@@ -96,23 +110,15 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must create a vm with your Id");
 
         VmDTO dto;
-        MultipartFile file;
+
 
         if(data.containsKey("dto"))
             dto = modelMapper.map(data.get("dto"),VmDTO.class);
         else
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field vmdto");
 
-        if (data.containsKey("screenvm"))
-            file = (MultipartFile) data.get("screenvm");
-        else
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field screenvm");
-
         try {
-            return teamService.createVm(id, Long.valueOf(teamId), dto, file.getBytes());
-        }
-        catch (IOException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Errore caricamento Vm");
+            return teamService.createVm(id, Long.valueOf(teamId), dto);
         }
         catch (StudentNotFoundException | TeamNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
@@ -139,6 +145,22 @@ public class StudentController {
         }
     }
 
+    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}")
+    public void uploadPhotoIntoVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody MultipartFile imageFile){
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must delete a vm with your Id");
+
+        try {
+            teamService.uploadPhotoIntoVm(id, Long.valueOf(teamId), Long.valueOf(vmId), imageFile);
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+        catch (StudentHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/switch")
     public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
 
@@ -155,6 +177,7 @@ public class StudentController {
         }
     }
 
+    /*
     @GetMapping("/{id}/image")
     public ResponseEntity<Resource> getImage (@PathVariable String id){
         try{
@@ -165,4 +188,6 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }
+
+     */
 }

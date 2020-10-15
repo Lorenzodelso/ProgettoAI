@@ -3,6 +3,7 @@ package it.polito.ai.laboratorio3.services;
 import it.polito.ai.laboratorio3.dtos.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Reader;
 import java.util.List;
@@ -82,17 +83,17 @@ public interface TeamService {
     List<TaskDTO> getTasks(String name);
     TaskDTO getTask(String name, Long taskId,UserDetails userDetails);
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
-    TaskDTO createTask(String name, String username, int days, byte[] bytes);
+    TaskDTO createTask(String name, String username, int days);
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     List<EssayDTO> getEssays(Long taskId);
 
     EssayDTO getEssay(Long taskId, Long essayId, UserDetails userDetails);
-    EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails, Long voto);
+    EssayDTO loadEssay(Long taskId, Long essayId, byte[] data, UserDetails userDetails);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<VmDTO> getVmsByStudent(String studentId, Long teamId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
-    VmDTO createVm(String id, Long teamId, VmDTO dto, byte[] bytes);
+    VmDTO createVm(String id, Long teamId, VmDTO dto);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     void switchVm(String id, Long teamId, Long vmId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
@@ -103,4 +104,18 @@ public interface TeamService {
     List<ImageDTO> getStorical(String name, Long taskId, Long essayId);
 
     List<ProfessorDTO> getAllProfessor();
+
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    StudentDTO uploadImageIntoStudent(MultipartFile file, String studentId);
+
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    ProfessorDTO uploadImageIntoProfessor(MultipartFile imageFile, String professorId);
+
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    void uploadPhotoIntoVm(String id, Long teamId, Long vmId, MultipartFile imageFile);
+
+    void uploadImageIntoTask(String name, Long taskId, UserDetails userDetails, MultipartFile imageFile);
+
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto);
 }

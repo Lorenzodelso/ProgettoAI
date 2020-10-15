@@ -2,11 +2,16 @@ package it.polito.ai.laboratorio3.controllers;
 
 import it.polito.ai.laboratorio3.dtos.ProfessorDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
+import it.polito.ai.laboratorio3.exceptions.DocenteNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,5 +28,18 @@ public class ProfessorController {
     public List<ProfessorDTO> getProfessor(){
         List<ProfessorDTO> prof = teamService.getAllProfessor();
         return prof;
+    }
+
+    @PutMapping({"/{professorId}"})
+    public ProfessorDTO uploadImageForProfessor(@RequestBody MultipartFile imageFile, @PathVariable String professorId, @AuthenticationPrincipal UserDetails userDetails){
+        try {
+            if (!professorId.equals(userDetails.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Non hai i privilegi!");
+            } else {
+                return teamService.uploadImageIntoProfessor(imageFile, professorId);
+            }
+        }catch (DocenteNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 }

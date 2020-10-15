@@ -264,25 +264,25 @@ public class CourseController {
     public TaskDTO createTask(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Object> data) {
         if (!data.containsKey("days"))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field days, duration of task");
-
-        if (!data.containsKey("file"))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field file, test of the task");
-
         int days = (Integer) data.get("days");
         if (days < 1)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration must be at least one day");
 
-        MultipartFile file = (MultipartFile) data.get("file");
-
         try {
-            return teamService.createTask(name, userDetails.getUsername(), days, file.getBytes());
-        } catch (IOException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
-        }
-        catch (CourseNotFoundException e) {
+            return teamService.createTask(name, userDetails.getUsername(), days);
+        } catch (CourseNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (DocenteHasNotPrivilegeException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+    }
+
+    @PutMapping("/{name}/task/{taskId}")
+    public void uploadImageIntoTask(@PathVariable String name,@PathVariable String taskId, @AuthenticationPrincipal UserDetails userDetails,@RequestBody MultipartFile imageFile ){
+        try{
+            teamService.uploadImageIntoTask(name,Long.valueOf(taskId),userDetails,imageFile);
+        }catch (TaskNotFoundException | StudentNotFoundException | CourseNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }
 
@@ -315,24 +315,23 @@ public class CourseController {
     }
 
     @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}")
-    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String,Object> option){
-        Long voto = Long.valueOf("-1");
-        if(!option.containsKey("file"))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insert field file");
-
-        MultipartFile file = (MultipartFile) option.get("file");
-
-        if(option.containsKey("voto"))
-            voto = Long.valueOf((String) option.get("voto"));
-
-        if(voto.intValue() > 31)
-            voto = Long.valueOf("31");
-        if(voto.intValue() < 18)
-            voto = Long.valueOf("17");
+    public EssayDTO loadEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody MultipartFile imageFile){
         try{
-            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), file.getBytes(), userDetails, voto);
+            return teamService.loadEssay(Long.valueOf(taskId),Long.valueOf(essayId), imageFile.getBytes(), userDetails);
         } catch (IOException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Errore caricamento file");
+        }
+        catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
+    @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}/valuta")
+    public void valutaEssay(@PathVariable String name, @PathVariable String taskId, @PathVariable String essayId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody String voto){
+        try{
+            teamService.valutaEssay(Long.valueOf(taskId),Long.valueOf(essayId), userDetails, Long.valueOf(voto));
+        } catch (DocenteHasNotPrivilegeException e ){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,e.getMessage());
         }
         catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());

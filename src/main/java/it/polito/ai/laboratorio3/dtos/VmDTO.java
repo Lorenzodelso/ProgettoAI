@@ -15,6 +15,7 @@ public class VmDTO {
     private int GBRam;
     private Vm.stati status;
     private String idCreatore;
+    private byte[] screenVm;
 
     public VmDTO(){}
 }

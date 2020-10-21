@@ -16,6 +16,7 @@ public class RegistrationController {
 
     @PostMapping("")
     public void register(@RequestBody UserDTO userDTO){
+
         notificationService.notifyRegistration(userDTO);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -158,12 +159,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyRegistration(UserDTO userDTO) {
+        String[] username = userDTO.getEmail().split("@");
         String tokenId = UUID.randomUUID().toString();
         Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(1));
         RegistrationToken token = new RegistrationToken();
         token.setId(tokenId);
         token.setExpirationDate(expiryDate);
-        token.setUserName(userDTO.getUsername());
+        token.setUserName(username[0]);
         token.setUserSurname(userDTO.getUsername());
         token.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
         token.setUserEmail(userDTO.getEmail());
@@ -210,4 +212,5 @@ public class NotificationServiceImpl implements NotificationService {
         }
         return user;
     }
+
 }

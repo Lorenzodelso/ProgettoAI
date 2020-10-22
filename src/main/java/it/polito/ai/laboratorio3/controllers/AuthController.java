@@ -44,7 +44,9 @@ public class AuthController {
             Map<Object, Object> model = new HashMap<>();
             User user = users.getOne(username);
             UserDTO dto = modelMapper.map(user, UserDTO.class);
-            model.put("userdto", dto);
+            model.put("username", dto.getUsername());
+            model.put("mail", dto.getEmail());
+            model.put("role", dto.getRole());
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {

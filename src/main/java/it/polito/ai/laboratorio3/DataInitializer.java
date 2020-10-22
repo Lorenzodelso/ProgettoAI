@@ -62,7 +62,12 @@ public class DataInitializer implements CommandLineRunner {
                     .roles(Arrays.asList("ROLE_STUDENT"))
                     .build()
             );
-            teamService.addStudent(new StudentDTO("s263206","loreno", "delsordo") , new byte[]{0});
+            StudentDTO dto = new StudentDTO();
+            dto.setId("s263206");
+            dto.setName("lorenzo");
+            dto.setFirstName("delsordo");
+            dto.setPhotoStudent(new byte[]{0});
+            teamService.addStudent(dto, new byte[]{0});
         }
 
         if(!users.existsById("d1")) {
@@ -73,7 +78,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build()
             );
 
-            teamService.addProfessor(new ProfessorDTO("d1","giovanni","malnati"));
+            teamService.addProfessor(new ProfessorDTO("d1","giovanni","malnati", new byte[]{0}));
         }
 
         if(!users.existsById("d2")) {
@@ -84,7 +89,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build()
             );
 
-            teamService.addProfessor(new ProfessorDTO("d2","gianpiero","cabodi"));
+            teamService.addProfessor(new ProfessorDTO("d2","gianpiero","cabodi",new byte[]{0}));
         }
 
         if(!courseRepository.existsById("PDS")){

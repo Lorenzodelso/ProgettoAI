@@ -71,7 +71,7 @@ public class TeamServiceImpl implements TeamService {
                 throw new DocenteNotFoundException();
             Docente docente = docenteOpt.get();
 
-            courseClass.addDocente(docente);
+            docente.addCourse(courseClass);
         }
         return true;
     }

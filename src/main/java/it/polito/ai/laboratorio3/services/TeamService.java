@@ -46,6 +46,10 @@ public interface TeamService {
 
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<TeamDTO> getTeamsForStudent(String studentId);
+
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    Optional<TeamDTO> getTeamForStudentByCourseName(String studentId, String name);
+
     List<StudentDTO>getMembers(Long TeamId);
 
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")

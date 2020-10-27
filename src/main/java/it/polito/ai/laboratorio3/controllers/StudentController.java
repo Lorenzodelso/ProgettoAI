@@ -87,6 +87,12 @@ public class StudentController {
         return teamDTOS;
     }
 
+    @GetMapping("/{id}/courses/{name}/teams")
+    public Optional<TeamDTO> getTeamsForStudentByCourse(@PathVariable String id, @PathVariable String name){
+        return teamService.getTeamForStudentByCourseName(id,name);
+
+    }
+
     @GetMapping("/{id}/courses/{name}/requests")
     public List<TokenDTO> getRequests (@PathVariable String id, @PathVariable String name){
         List<TokenDTO> tokens = teamService.getRequestsForStudent(id, name);

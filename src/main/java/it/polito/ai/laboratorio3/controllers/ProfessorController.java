@@ -44,7 +44,7 @@ public class ProfessorController {
         }
     }
 
-    @GetMapping("/{teacherId}")
+    @GetMapping("/{teacherId}/courses")
     public List<CourseDTO> getCoursesByTeacherId(@PathVariable String teacherId) {
         System.out.println("WEWE");
         List<CourseDTO> courses = teamService.getCoursesByProf(teacherId);

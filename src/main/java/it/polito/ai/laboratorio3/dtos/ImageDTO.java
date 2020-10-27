@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 public class ImageDTO {
-    private String id;
+    private Long id;
     private String filename;
     private Timestamp creationDate;
     private byte[] data;

@@ -10,7 +10,7 @@ public class EssayDTO {
     public enum stati {Letto, Consegnato, Rivisto, Terminato}
 
     private Long id;
-    private int voto;
+    private Long voto;
     public stati stato;
     private String idStudente;
 

@@ -550,6 +550,7 @@ public class TeamServiceImpl implements TeamService {
         task.setDataRilascio(Timestamp.from(Instant.now()));
         task.setDataScadenza(Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS)));
         task.setCourse(course);
+        task.setDocente(docenteRepository.getOne(username));
         task = taskRepository.save(task);
         course.addTask(task);
         return modelMapper.map(task, TaskDTO.class);
@@ -798,10 +799,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto) {
-        if (voto>30L)
-            voto = 30L;
-        else if(voto<17L)
-            voto = 17L;
+        if (voto>31)
+            voto = 31L;
+        else if(voto<0)
+            voto = 0L;
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if ( !taskOpt.isPresent()){
             throw new TaskNotFoundException();
@@ -845,9 +846,13 @@ public class TeamServiceImpl implements TeamService {
                 essay.setStato(Essay.stati.Rivisto);
             }
         }
+        int tot = essay.getImages().size();
+        tot ++;
+        String filename = "essay" + essayId + "_" + tot;
         Image image = new Image();
         image.setCreationDate(Timestamp.from(Instant.now()));
         image.setData(data);
+        image.setFilename(filename);
         image = imageRepository.save(image);
         essay.addImage(image);
         return modelMapper.map(essay,EssayDTO.class);

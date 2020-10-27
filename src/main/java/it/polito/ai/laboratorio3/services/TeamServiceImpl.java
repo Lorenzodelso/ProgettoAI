@@ -8,6 +8,7 @@ import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,16 @@ public class TeamServiceImpl implements TeamService {
     public Optional<CourseDTO> getCourse(String name) {
         return courseRepository.findById(name)
                 .map(course -> modelMapper.map(course, CourseDTO.class));
+    }
+
+    @Override
+    public List<CourseDTO> getCoursesByProf(String teacherId) {
+        if (!docenteRepository.findById(teacherId).isPresent())
+            throw new DocenteNotFoundException();
+        return docenteRepository.findById(teacherId).get().getCourses()
+                .stream()
+                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -510,10 +521,10 @@ public class TeamServiceImpl implements TeamService {
         if (!taskOpt.isPresent())
             throw new TaskNotFoundException();
 
-        if (userDetails.getAuthorities().contains("ROLE_PROFESSOR"))
+        if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PROFESSOR")))
             return modelMapper.map(taskOpt.get(),TaskDTO.class);
         else {
-            if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+            if(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))){
                 if(taskOpt.get().getEssays().stream()
                         .noneMatch(e -> e.getStudent().getId().equals(userDetails.getUsername()))){
                     //Creare essay
@@ -581,7 +592,7 @@ public class TeamServiceImpl implements TeamService {
         if (!essayOpt.isPresent())
             throw new EssayNotFoundException();
 
-        if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+        if(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))){
             if(essayOpt.get().getStato().equals(Essay.stati.Rivisto)){
                 essayOpt.get().setStato(Essay.stati.Letto);
             }
@@ -835,11 +846,11 @@ public class TeamServiceImpl implements TeamService {
         if(essay.getStato().equals(Essay.stati.Terminato))
             throw new EssayNotModifiableException();
 
-        if(userDetails.getAuthorities().contains("ROLE_STUDENT")){
+        if(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))){
             essay.setStato(Essay.stati.Consegnato);
             essay.setIdStudente(userDetails.getUsername());
         }else{
-            if (userDetails.getAuthorities().contains(("ROLE_PROFESSOR"))){
+            if (userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PROFESSOR"))){
 
                 if(!essay.getStato().equals(Essay.stati.Consegnato))
                     throw new EssayNotLoadedByStudentException();

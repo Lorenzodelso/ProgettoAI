@@ -1,5 +1,6 @@
 package it.polito.ai.laboratorio3.controllers;
 
+import it.polito.ai.laboratorio3.dtos.CourseDTO;
 import it.polito.ai.laboratorio3.dtos.ProfessorDTO;
 import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.exceptions.DocenteNotFoundException;
@@ -42,4 +43,13 @@ public class ProfessorController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @GetMapping("/{teacherId}")
+    public List<CourseDTO> getCoursesByTeacherId(@PathVariable String teacherId) {
+        System.out.println("WEWE");
+        List<CourseDTO> courses = teamService.getCoursesByProf(teacherId);
+        courses.forEach(ModelHelper::enrich);
+        return courses;
+    }
+
 }

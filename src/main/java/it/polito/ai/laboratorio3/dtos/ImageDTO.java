@@ -10,5 +10,6 @@ public class ImageDTO {
     private Long id;
     private String filename;
     private Timestamp creationDate;
+    private String idCreator;
     private byte[] data;
 }

@@ -13,6 +13,7 @@ public class Image {
     private Long id;
     private String filename;
     private Timestamp creationDate;
+    private String idCreator;
 
     @Lob
     private byte[] data;

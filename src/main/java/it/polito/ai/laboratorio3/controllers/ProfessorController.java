@@ -6,6 +6,7 @@ import it.polito.ai.laboratorio3.dtos.StudentDTO;
 import it.polito.ai.laboratorio3.exceptions.DocenteNotFoundException;
 import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.services.TeamService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
+import static it.polito.ai.laboratorio3.controllers.ModelHelper.enrich;
 
 
 @RestController
@@ -24,6 +27,9 @@ public class ProfessorController {
 
     @Autowired
     TeamService teamService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping({"","/"})
     public List<ProfessorDTO> getProfessor(){

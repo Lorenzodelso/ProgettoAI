@@ -3,6 +3,7 @@ package it.polito.ai.laboratorio3.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class Essay {
     private Long voto;
     private stati stato;
     private String idStudente;
+    private Timestamp lastModified;
 
     @OneToMany(mappedBy = "essay")
     private List<Image> images = new ArrayList<>();

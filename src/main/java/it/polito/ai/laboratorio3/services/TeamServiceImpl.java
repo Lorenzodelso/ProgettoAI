@@ -882,8 +882,10 @@ public class TeamServiceImpl implements TeamService {
         String filename = "essay" + essayId + "_" + tot;
         Image image = new Image();
         image.setCreationDate(Timestamp.from(Instant.now()));
+        essay.setLastModified(Timestamp.from(Instant.now()));
         image.setData(data);
         image.setFilename(filename);
+        image.setIdCreator(userDetails.getUsername());
         image = imageRepository.save(image);
         essay.addImage(image);
         return modelMapper.map(essay,EssayDTO.class);

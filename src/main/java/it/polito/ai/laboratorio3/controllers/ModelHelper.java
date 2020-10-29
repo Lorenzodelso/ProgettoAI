@@ -1,9 +1,6 @@
 package it.polito.ai.laboratorio3.controllers;
 
-import it.polito.ai.laboratorio3.dtos.CourseDTO;
-import it.polito.ai.laboratorio3.dtos.EssayDTO;
-import it.polito.ai.laboratorio3.dtos.StudentDTO;
-import it.polito.ai.laboratorio3.dtos.TeamDTO;
+import it.polito.ai.laboratorio3.dtos.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;

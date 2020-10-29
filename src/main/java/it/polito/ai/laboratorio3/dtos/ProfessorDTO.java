@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfessorDTO {
+public class ProfessorDTO extends RepresentationModel<ProfessorDTO> {
     private String id;
     private String name;
     private String firstName;

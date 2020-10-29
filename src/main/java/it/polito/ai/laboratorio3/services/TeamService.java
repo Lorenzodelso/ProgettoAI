@@ -23,6 +23,7 @@ public interface TeamService {
     boolean addStudent(StudentDTO student, byte[] studentImg);
     boolean addProfessor(ProfessorDTO professor);
     Optional<StudentDTO> getStudent(String studentId);
+    Optional<ProfessorDTO> getProf(String professorId);
     List<StudentDTO> getAllStudents();
     List<StudentDTO> getEnrolledStudents(String courseName);
 

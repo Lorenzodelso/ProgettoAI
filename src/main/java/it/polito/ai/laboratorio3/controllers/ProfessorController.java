@@ -43,6 +43,15 @@ public class ProfessorController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+    
+        @GetMapping("/{professorId}")
+    public ProfessorDTO getProfessorById(@PathVariable String professorId){
+        Optional<ProfessorDTO> professorDTO = teamService.getProf(professorId);
+        if(professorDTO.isPresent())
+            return enrich(professorDTO.get());
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,professorId);
+    }
 
     @GetMapping("/{teacherId}/courses")
     public List<CourseDTO> getCoursesByTeacherId(@PathVariable String teacherId) {

@@ -125,6 +125,12 @@ public class TeamServiceImpl implements TeamService {
         return studentRepository.findById(studentId)
                 .map(student -> modelMapper.map(student,StudentDTO.class));
     }
+    
+        @Override
+    public Optional<ProfessorDTO> getProf(String professorId) {
+        return docenteRepository.findById(professorId)
+                .map(professor -> modelMapper.map(professor,ProfessorDTO.class));
+    }
 
     @Override
     public List<StudentDTO> getAllStudents() {

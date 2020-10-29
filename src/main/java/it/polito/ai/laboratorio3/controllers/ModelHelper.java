@@ -24,7 +24,12 @@ public class ModelHelper {
                 .add(linkTo(CourseController.class).slash(courseDTO.getName()+"/alreadyInTeamStudents").withRel("alreadyInTeamStudents"))
                 .add(linkTo(CourseController.class).slash(courseDTO.getName()+"/tasks").withRel("tasks"));
     }
-
+    public static ProfessorDTO enrich(ProfessorDTO professorDTO){
+        return professorDTO.add(linkTo(ProfessorController.class).slash(professorDTO.getId()).withSelfRel())
+                .add(linkTo(ProfessorController.class).slash(professorDTO.getId()+"/courses").withRel("courses"))
+                .add(linkTo(ProfessorController.class).slash(professorDTO.getId()+"/teams").withRel("teams"))
+                .add(linkTo(ProfessorController.class).slash(professorDTO.getId()+"/image").withRel("image"));
+    }
 
 
 }

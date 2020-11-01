@@ -13,10 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +22,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -43,10 +41,9 @@ public class AuthController {
             String token = jwtTokenProvider.createToken(username, this.users.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username " + username + "not found")).getRoles());
             Map<Object, Object> model = new HashMap<>();
             User user = users.getOne(username);
-            UserDTO dto = modelMapper.map(user, UserDTO.class);
-            model.put("username", dto.getUsername());
-            model.put("mail", dto.getEmail());
-            model.put("role", dto.getRole());
+            //UserDTO dto = modelMapper.map(user, UserDTO.class);
+            model.put("username", user.getUsername());
+            model.put("role",user.getRoles());
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {

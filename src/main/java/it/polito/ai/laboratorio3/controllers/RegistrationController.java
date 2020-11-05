@@ -17,6 +17,8 @@ public class RegistrationController {
     @PostMapping("")
     public void register(@RequestBody UserDTO userDTO){
 
+        String[] check = userDTO.getEmail().split("@");
+        if(check[1].startsWith("studenti.polito.it") ||check[1].startsWith("polito.it") )
         notificationService.notifyRegistration(userDTO);
     }
 }

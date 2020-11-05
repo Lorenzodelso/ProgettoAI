@@ -505,7 +505,7 @@ public class TeamServiceImpl implements TeamService {
                 .count() < 1)
             throw new DocenteHasNotPrivilegeException();
 
-        if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBdisk || maxAccese < team.getVmAccese())
+        if(team.getVcpuUsati() > vcpus || team.getGBDiskUsati() > GBdisk || team.getGBRamUsati() > GBram || maxAccese < team.getVmAccese())
             throw new TooManyResourcesUsedException();
         if(vcpus != -1)
             team.setVcpuTot(vcpus);

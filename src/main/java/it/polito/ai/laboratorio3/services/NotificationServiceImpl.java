@@ -159,23 +159,27 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyRegistration(UserDTO userDTO) {
+        System.out.println(userDTO);
         String[] username = userDTO.getEmail().split("@");
+        if(username[1].startsWith("polito.it") || username[1].startsWith("studenti.polito.it"))
+        {
         String tokenId = UUID.randomUUID().toString();
         Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(1));
         RegistrationToken token = new RegistrationToken();
         token.setId(tokenId);
         token.setExpirationDate(expiryDate);
-        token.setUserName(username[0]);
-        token.setUserSurname(userDTO.getUsername());
+        token.setUserName(userDTO.getNome());
+        token.setUserSurname(userDTO.getCognome());
         token.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
         token.setUserEmail(userDTO.getEmail());
         token.setUserRole(userDTO.getRole());
+        token.setUserMatricola(userDTO.getUsername());
 
         registrationTokenRepository.save(token);
 
         String bodyMessage = String.format(registrationTemplate.getText(),tokenId);
         sendMessage(userDTO.getEmail(),"Registration confirmation", bodyMessage);
-    }
+    } }
 
     @Override
     public UserDetails confirmRegistration(String token) {
@@ -189,7 +193,7 @@ public class NotificationServiceImpl implements NotificationService {
         RegistrationToken registrationToken = tokenOptional.get();
         registrationTokenRepository.delete(registrationToken);
         User user = User.builder()
-                .username(registrationToken.getUserName())
+                .username(registrationToken.getUserMatricola())
                 .password(registrationToken.getUserPassword())
                 .roles(Arrays.asList(registrationToken.getUserRole()))
                 .build();
@@ -198,15 +202,14 @@ public class NotificationServiceImpl implements NotificationService {
             StudentDTO studentDTO = new StudentDTO();
             studentDTO.setName(registrationToken.getUserName());
             studentDTO.setFirstName(registrationToken.getUserSurname());
-            //TODO: generazione dell'id dello studente per ora fatto con UUID
-            studentDTO.setId(UUID.fromString(registrationToken.getUserName()).toString());
+            studentDTO.setId(registrationToken.getUserMatricola());
             teamService.addStudent(studentDTO,new byte[0]);
         }else{
             if(registrationToken.getUserRole().equals("ROLE_PROFESSOR")){
                 ProfessorDTO professorDTO = new ProfessorDTO();
                 professorDTO.setName(registrationToken.getUserName());
                 professorDTO.setFirstName(registrationToken.getUserSurname());
-                professorDTO.setId(UUID.fromString(registrationToken.getUserName()).toString());
+                professorDTO.setId(registrationToken.getUserMatricola());
                 teamService.addProfessor(professorDTO);
             }
         }

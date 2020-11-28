@@ -19,4 +19,6 @@ public class RegistrationToken {
     private String userPassword;
     private String userEmail;
     private String userRole;
+    private String userMatricola;
+
 }

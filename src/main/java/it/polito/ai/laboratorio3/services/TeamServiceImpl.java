@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -697,12 +698,24 @@ public class TeamServiceImpl implements TeamService {
         if(vm.getStatus().equals(Vm.stati.Accesa)) {
             vm.setStatus(Vm.stati.Spenta);
             team.setVmAccese(team.getVmAccese()-1);
+            team.setGBDiskUsati(team.getGBDiskUsati() - vm.getGBDisk());
+            team.setGBRamUsati(team.getGBRamUsati() - vm.getGBRam());
+            team.setVcpuUsati(team.getVcpuUsati() - vm.getVcpu());
         }
         else {
             if(team.getMaxVmAccese() == team.getVmAccese())
                 throw new MaxVmAcceseException();
             else
             vm.setStatus(Vm.stati.Accesa);
+            team.setVmAccese(team.getVmAccese()+1);
+            team.setGBDiskUsati(team.getGBDiskUsati() + vm.getGBDisk());
+            team.setGBRamUsati(team.getGBRamUsati() + vm.getGBRam());
+            team.setVcpuUsati(team.getVcpuUsati() + vm.getVcpu());
+
+            if (team.getGBDiskUsati() >= team.getCourse().getModelVM_GBDisk() ||
+                team.getGBRamUsati() >= team.getCourse().getModelVM_GBRam() ||
+                team.getVcpuUsati() >= team.getCourse().getModelVM_cpu())
+                throw new TooManyResourcesUsedException();
         }
     }
 
@@ -850,6 +863,91 @@ public class TeamServiceImpl implements TeamService {
             throw new EssayNotLoadedByStudentException();
         essay.setStato(Essay.stati.Terminato);
         essay.setVoto(voto);
+    }
+
+    @Override
+    public EssayDTO getEssayByStudentId(String name, Long taskId, String id) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+        Optional<Essay> essayOpt = task.getEssays().stream()
+                .filter(e-> e.getIdStudente().equals(id))
+                .findFirst();
+        if (!essayOpt.isPresent())
+            throw new EssayNotFoundException();
+
+       /* if(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))){
+            if(essayOpt.get().getStato().equals(Essay.stati.Rivisto)){
+                essayOpt.get().setStato(Essay.stati.Letto);
+            }
+        }/*/
+        return modelMapper.map(essayOpt.get(),EssayDTO.class);
+    }
+
+    @Override
+    public EssayDTO loadFirstEssay(String name, Long taskId, String studentId) {
+        Student student;
+        if(!studentRepository.existsById(studentId))
+            throw new StudentNotFoundException();
+        else
+            student = studentRepository.getOne(studentId);
+
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if ( !taskOpt.isPresent()){
+            throw new TaskNotFoundException();
+        }
+        Task task = taskOpt.get();
+
+        Essay essay = new Essay();
+        essay.setIdStudente(studentId);
+        essay.setStato(Essay.stati.Letto);
+        essay = essayRepository.save(essay);
+        essay.setStudent(student);
+        essay.setTask(task);
+        return modelMapper.map(essay,EssayDTO.class);
+    }
+
+    @Override
+    public void uploadVmParamsByStudent(String id, Long teamId, Long vmId, Map<String, Integer> data) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+        if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
+            throw new VmNotFoundException();
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException();
+        Vm vm = vmRepository.getOne(vmId);
+
+        if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
+            throw new StudentHasNotPrivilegeException();
+
+        if(vm.getStatus().equals(Vm.stati.Accesa)) {
+            vm.setStatus(Vm.stati.Spenta);
+            team.setVmAccese(team.getVmAccese()-1);
+            team.setGBDiskUsati(team.getGBDiskUsati() - vm.getGBDisk());
+            team.setGBRamUsati(team.getGBRamUsati() - vm.getGBRam());
+            team.setVcpuUsati(team.getVcpuUsati() - vm.getVcpu());
+        }
+
+        if (data.containsKey("vcpus"))
+            vm.setVcpu(data.get("vcpus"));
+        if (data.containsKey("gbram"))
+            vm.setGBRam(data.get("gbram"));
+        if (data.containsKey("gbdisk"))
+            vm.setGBDisk(data.get("gbdisk"));
+       team.aggiornaRisorseTotali();
+
     }
 
     @Override

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Data
@@ -63,4 +64,19 @@ public class Team {
         members.remove(student);
         student.getTeams().remove(this);
     }
+
+    public void aggiornaRisorseTotali() {
+        AtomicInteger vcputotali = new AtomicInteger();
+        AtomicInteger gbdisktotali = new AtomicInteger();
+        AtomicInteger gbramtotali = new AtomicInteger();
+        vms.stream().forEach(v->{
+                    vcputotali.set(vcputotali.get() + v.getVcpu());
+                    gbdisktotali.set(gbdisktotali.get() + v.getGBDisk());
+                    gbramtotali.set(gbramtotali.get() + v.getGBRam());
+                });
+        setGBDiskTot(gbdisktotali.get());
+        setVcpuTot(vcputotali.get());
+        setGBRamTot(gbramtotali.get());
+    }
+
 }

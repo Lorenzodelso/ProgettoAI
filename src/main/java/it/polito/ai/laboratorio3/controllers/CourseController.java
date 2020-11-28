@@ -286,6 +286,25 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/{name}/task/{taskId}/studentId/{id}/essay")
+    public EssayDTO getEssayByStudentId(@PathVariable String name,@PathVariable String taskId, @PathVariable String id, @AuthenticationPrincipal UserDetails userDetails){
+
+        try{
+           return teamService.getEssayByStudentId(name,Long.valueOf(taskId),id);
+        }catch (TaskNotFoundException | StudentNotFoundException | CourseNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
+    @PostMapping("/{name}/task/{taskId}/essay")
+    public EssayDTO loadFirstEssay(@PathVariable String name, @PathVariable String taskId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody EssayDTO dto){
+        try{
+            return teamService.loadFirstEssay(name, Long.valueOf(taskId), userDetails.getUsername());
+        } catch (TaskNotFoundException | StudentNotFoundException | CourseNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
+
     @GetMapping("/{name}/tasks/{taskId}/essays")
     //TODO controllare se funziona anche senza parametro name
     public List<EssayDTO> getEssays(@PathVariable String taskId, @PathVariable String name){

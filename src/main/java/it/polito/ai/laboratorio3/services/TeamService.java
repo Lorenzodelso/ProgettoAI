@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TeamService {
@@ -125,4 +126,10 @@ public interface TeamService {
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto);
+
+    EssayDTO getEssayByStudentId(String name, Long taskId, String id);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    EssayDTO loadFirstEssay(String name, Long taskId, String username);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    void uploadVmParamsByStudent(String id, Long teamId, Long vmId, Map<String, Integer> data);
 }

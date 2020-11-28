@@ -154,10 +154,26 @@ public class StudentController {
     @PutMapping("/{id}/teams/{teamid}/vms/{vmId}")
     public void uploadPhotoIntoVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody MultipartFile imageFile){
         if(!id.equals(userDetails.getUsername()))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must delete a vm with your Id");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
 
         try {
             teamService.uploadPhotoIntoVm(id, Long.valueOf(teamId), Long.valueOf(vmId), imageFile);
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+        catch (StudentHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/changeParams")
+    public void uploadPhotoIntoVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data){
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
+
+        try {
+            teamService.uploadVmParamsByStudent(id, Long.valueOf(teamId), Long.valueOf(vmId), data);
         }
         catch (StudentNotFoundException | TeamNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());

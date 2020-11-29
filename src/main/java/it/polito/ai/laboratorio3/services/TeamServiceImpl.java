@@ -841,6 +841,31 @@ public class TeamServiceImpl implements TeamService {
         task.setDescription(fromFileToByteArray(imageFile));
     }
 
+
+    @Override
+    public void uploadImageIntoEssay(Long essayId, Long taskId, UserDetails userDetails, MultipartFile imageFile) {
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if (!taskOpt.isPresent())
+            throw new TaskNotFoundException();
+        Task task = taskOpt.get();
+        Course course = task.getCourse();
+        List<String> listStudenti = course.getStudents().stream().map(studente -> studente.getId()).collect(Collectors.toList());
+        if (!listStudenti.contains(userDetails.getUsername())){
+            throw new StudentHasNotPrivilegeException();
+        }
+        Optional<Essay> essayOpt = essayRepository.findById(essayId);
+        if (!essayOpt.isPresent())
+            throw new EssayNotFoundException();
+        Essay essay = essayOpt.get();
+        if(!task.getEssays().contains(essay))
+            throw new EssayNotFoundException();
+
+        essay.addImage((Image) imageFile);
+
+    }
+
+
+
     @Override
     public void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto) {
         if (voto>31)

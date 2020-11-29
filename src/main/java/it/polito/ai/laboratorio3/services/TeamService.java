@@ -132,4 +132,6 @@ public interface TeamService {
     EssayDTO loadFirstEssay(String name, Long taskId, String username);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     void uploadVmParamsByStudent(String id, Long teamId, Long vmId, Map<String, Integer> data);
+
+    void uploadImageIntoEssay(Long essayId, Long taskId, UserDetails userDetails, MultipartFile imageFile);
 }

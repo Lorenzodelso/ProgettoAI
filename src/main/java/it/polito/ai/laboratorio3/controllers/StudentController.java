@@ -93,6 +93,22 @@ public class StudentController {
 
     }
 
+    @GetMapping("/{id}/courses/{coursename}/hasTeam")
+    public boolean studentHasTeam(@PathVariable String id, @PathVariable String coursename) {
+        Optional<TeamDTO> t = teamService.getTeamForStudentByCourseName(id,coursename);
+        if(t.isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @GetMapping("/teams/{teamId}/members")
+    public List<StudentDTO> getTeamMembers(@PathVariable String teamId) {
+        return teamService.getMembers(Long.valueOf(teamId));
+    }
+
+
     @GetMapping("/{id}/courses/{name}/requests")
     public List<TokenDTO> getRequests (@PathVariable String id, @PathVariable String name){
         List<TokenDTO> tokens = teamService.getRequestsForStudent(id, name);
@@ -135,7 +151,7 @@ public class StudentController {
 
     }
 
-    @DeleteMapping("/{id}/teams/{teamid}/vms/{vmId}")
+    @DeleteMapping("/{id}/teams/{teamId}/vms/{vmId}")
     public void deleteVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
         if(!id.equals(userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must delete a vm with your Id");
@@ -151,7 +167,7 @@ public class StudentController {
         }
     }
 
-    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}")
+    @PutMapping("/{id}/teams/{teamId}/vms/{vmId}")
     public void uploadPhotoIntoVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody MultipartFile imageFile){
         if(!id.equals(userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
@@ -167,7 +183,7 @@ public class StudentController {
         }
     }
 
-    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/changeParams")
+    @PutMapping("/{id}/teams/{teamId}/vms/{vmId}/changeParams")
     public void uploadPhotoIntoVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody Map<String, Integer> data){
         if(!id.equals(userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
@@ -183,7 +199,7 @@ public class StudentController {
         }
     }
 
-    @PutMapping("/{id}/teams/{teamid}/vms/{vmId}/switch")
+    @PutMapping("/{id}/teams/{teamId}/vms/{vmId}/switch")
     public void switchVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails){
 
         if(!id.equals(userDetails.getUsername()))

@@ -64,7 +64,7 @@ public interface TeamService {
     List<StudentDTO> getStudentsInTeams(String courseName);
 
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
-    List<StudentDTO> getAvailableStudents(String courseName);
+    List<StudentDTO> getAvailableStudents(String courseName, String id);
 
     void activeTeam(Long teamId);
     void evictTeam(Long teamId);

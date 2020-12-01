@@ -126,7 +126,7 @@ public class TeamServiceImpl implements TeamService {
         return studentRepository.findById(studentId)
                 .map(student -> modelMapper.map(student,StudentDTO.class));
     }
-    
+
         @Override
     public Optional<ProfessorDTO> getProf(String professorId) {
         return docenteRepository.findById(professorId)
@@ -341,11 +341,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<StudentDTO> getAvailableStudents(String courseName) {
+    public List<StudentDTO> getAvailableStudents(String courseName, String id) {
         if (!courseRepository.findById(courseName).isPresent())
             throw new CourseNotFoundException();
         return courseRepository.getStudentsNotInTeams(courseName).stream()
                 .map(student -> modelMapper.map(student,StudentDTO.class))
+                .filter(studentDTO -> !studentDTO.getId().equals(id))
                 .collect(Collectors.toList());
     }
 
@@ -371,6 +372,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TokenDTO> getRequestsForStudent(String id, String name) {
+        tokenRepository.deleteExpiredToken(Timestamp.valueOf(LocalDateTime.now()));
         Optional<Student> studentOpt = studentRepository.findById(id);
         if (!studentOpt.isPresent())
             throw new StudentNotFoundException();
@@ -378,7 +380,7 @@ public class TeamServiceImpl implements TeamService {
        return student.getRequests()
                 .stream()
                 .filter(req -> req.getCourseName().equals(name))
-                .filter( req-> req.getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now())))
+                //.filter( req-> req.getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now())))
                 .map(req-> modelMapper.map(req, TokenDTO.class))
                 .collect(Collectors.toList());
     }

@@ -135,8 +135,8 @@ public class CourseController {
     }
 
     @GetMapping("/{name}/availableStudents")
-    public List<StudentDTO> getAvailableStudents(@PathVariable String name) {
-        List<StudentDTO> studentDTOS = teamService.getAvailableStudents(name);
+    public List<StudentDTO> getAvailableStudents(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails) {
+        List<StudentDTO> studentDTOS = teamService.getAvailableStudents(name, userDetails.getUsername());
         studentDTOS.forEach(ModelHelper::enrich);
         return studentDTOS;
     }

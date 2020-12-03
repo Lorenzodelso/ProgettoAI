@@ -255,6 +255,7 @@ public class TeamServiceImpl implements TeamService {
         return studentRepository.findById(studentId).get().getTeams()
                 .stream()
                 .filter(t-> t.getCourse().getName().equals(name))
+                .filter(t-> t.getStatus()==1)
                 .map(team -> modelMapper.map(team,TeamDTO.class))
                 .collect(Collectors.toList()).stream().findFirst();
     }
@@ -287,11 +288,14 @@ public class TeamServiceImpl implements TeamService {
                         throw new MemberNotInCourseException();
 
                     List<TeamDTO> teams = getTeamsForStudent(memberId);
-                    long flag = teams.stream()
+                    /*long flag = teams.stream()
                             .map(team -> modelMapper.map(team, Team.class))
                             .filter(team -> team.getCourse().getName().equals(courseId))
                             .count();
                     if (flag > 0)
+                        throw new TeamAlreadyInCourseException();*/
+                    boolean check= getTeamForCourse(courseId).containsAll(getTeamsForStudent(memberId));
+                    if(check)
                         throw new TeamAlreadyInCourseException();
                 } );
         long numDuplicati = memberIds.size() - (memberIds.stream().distinct().count());
@@ -845,30 +849,6 @@ public class TeamServiceImpl implements TeamService {
 
 
     @Override
-    public void uploadImageIntoEssay(Long essayId, Long taskId, UserDetails userDetails, MultipartFile imageFile) {
-        Optional<Task> taskOpt = taskRepository.findById(taskId);
-        if (!taskOpt.isPresent())
-            throw new TaskNotFoundException();
-        Task task = taskOpt.get();
-        Course course = task.getCourse();
-        List<String> listStudenti = course.getStudents().stream().map(studente -> studente.getId()).collect(Collectors.toList());
-        if (!listStudenti.contains(userDetails.getUsername())){
-            throw new StudentHasNotPrivilegeException();
-        }
-        Optional<Essay> essayOpt = essayRepository.findById(essayId);
-        if (!essayOpt.isPresent())
-            throw new EssayNotFoundException();
-        Essay essay = essayOpt.get();
-        if(!task.getEssays().contains(essay))
-            throw new EssayNotFoundException();
-
-        essay.addImage((Image) imageFile);
-
-    }
-
-
-
-    @Override
     public void valutaEssay(Long taskId, Long essayId, UserDetails userDetails, Long voto) {
         if (voto>31)
             voto = 31L;
@@ -1033,5 +1013,21 @@ public class TeamServiceImpl implements TeamService {
     }
 
 
-
+    @Override
+    public List<ImageDTO> getMyStorical(String name, String id,Long taskId, Long essayId) {
+        if(!courseRepository.existsById(name))
+            throw new CourseNotFoundException();
+        if(!taskRepository.existsById(taskId))
+            throw new TaskNotFoundException();
+        Task task = taskRepository.getOne(taskId);
+        if(!task.getCourse().getName().equals(name))
+            throw new TaskNotFoundException();
+        if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))
+            throw new EssayNotFoundException();
+        Essay essay = essayRepository.getOne(essayId);
+        return essay.getImages().stream()
+                .filter(t-> t.getIdCreator().equals(id))
+                .map(i-> modelMapper.map(i,ImageDTO.class))
+                .collect(Collectors.toList());
+    }
 }

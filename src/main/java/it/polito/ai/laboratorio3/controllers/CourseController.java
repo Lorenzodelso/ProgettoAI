@@ -356,4 +356,15 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }
+
+
+    @GetMapping("/{name}/student/{id}/tasks/{taskId}/essays/{essayId}/mystorical")
+    public List<ImageDTO> getEssayStoricalForStudent(@PathVariable String taskId, @PathVariable String name, @PathVariable String essayId, @PathVariable String id) {
+        try {
+            return teamService.getMyStorical(name, id, Long.valueOf(taskId), Long.valueOf(essayId));
+        } catch (EssayNotFoundException | TaskNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 }

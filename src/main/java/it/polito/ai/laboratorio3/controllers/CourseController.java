@@ -20,11 +20,9 @@ import javax.persistence.Lob;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.StubNotFoundException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 import static it.polito.ai.laboratorio3.controllers.ModelHelper.enrich;
@@ -108,10 +106,20 @@ public class CourseController {
     }
 
     @PostMapping("/{name}/proposeTeam")
-    public TeamDTO proposeTeam(@PathVariable String name, @RequestParam("team") String team, @RequestParam("membersIds") List<String> membersIds) {
-        TeamDTO teamDTO = teamService.proposeTeam(name, team, membersIds);
-        notificationService.notifyTeam(teamDTO, membersIds);
-        return teamDTO;
+    public TeamDTO proposeTeam(@PathVariable String name, @RequestParam("team") String team, @RequestParam("timeout") Long hours,
+                               @RequestParam("membersIds") List<String> membersIds, @AuthenticationPrincipal UserDetails userDetails) {
+        membersIds.add(userDetails.getUsername());
+        membersIds = new ArrayList<>(new HashSet<>(membersIds));
+        System.out.println("-------ProposeTeam id senza duplicati:");
+        for(String s : membersIds)
+            System.out.println("-------"+s);
+        try {
+            TeamDTO teamDTO = teamService.proposeTeam(name, team, membersIds);
+            notificationService.notifyTeam(teamDTO, membersIds, hours);
+            return teamDTO;
+        } catch (CourseNotFoundException | StudentNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @GetMapping("/{name}/enableCourse")

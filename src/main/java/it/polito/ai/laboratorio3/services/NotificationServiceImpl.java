@@ -8,6 +8,7 @@ import it.polito.ai.laboratorio3.entities.RegistrationToken;
 import it.polito.ai.laboratorio3.entities.Student;
 import it.polito.ai.laboratorio3.entities.Token;
 import it.polito.ai.laboratorio3.entities.User;
+import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.exceptions.TokenExpiredException;
 import it.polito.ai.laboratorio3.exceptions.TokenNotFoundException;
 import it.polito.ai.laboratorio3.repositories.RegistrationTokenRepository;
@@ -129,19 +130,20 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyTeam(TeamDTO dto, List<String> memberIds) {
+    public void notifyTeam(TeamDTO dto, List<String> memberIds, Long hours) {
 
         String courseName = teamService.getCourseNameByTeamId(dto.getId());
+        Student student;
 
         for (String s : memberIds) {
-            Optional<Student> studentOpt = studentRepository.findById(s);
-            if (!studentOpt.isPresent())
-                throw new RuntimeException();
-            Student student = studentOpt.get();
+            if(!studentRepository.existsById(s))
+                throw new StudentNotFoundException();
+
+            student = studentRepository.getOne(s);
 
             String tokendId = UUID.randomUUID().toString();
             Long teamId = dto.getId();
-            Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(1));
+            Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(hours));
             Token token = new Token();
             token.setId(tokendId);
             token.setTeamId(teamId);

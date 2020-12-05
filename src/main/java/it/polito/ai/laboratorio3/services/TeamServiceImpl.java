@@ -21,10 +21,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -287,20 +284,13 @@ public class TeamServiceImpl implements TeamService {
                     if (!courses.contains(courseDTO))
                         throw new MemberNotInCourseException();
 
-                    List<TeamDTO> teams = getTeamsForStudent(memberId);
-                    /*long flag = teams.stream()
-                            .map(team -> modelMapper.map(team, Team.class))
-                            .filter(team -> team.getCourse().getName().equals(courseId))
-                            .count();
-                    if (flag > 0)
-                        throw new TeamAlreadyInCourseException();*/
                     boolean check= getTeamForCourse(courseId).containsAll(getTeamsForStudent(memberId));
                     if(check)
                         throw new TeamAlreadyInCourseException();
                 } );
-        long numDuplicati = memberIds.size() - (memberIds.stream().distinct().count());
+        /*long numDuplicati = memberIds.size() - (memberIds.stream().distinct().count());
         if (numDuplicati>0)
-            throw new DuplicatesInListException();
+            throw new DuplicatesInListException();*/
 
         Team team = new Team();
         team.setCourse(courseRepository.getOne(courseId));
@@ -348,10 +338,21 @@ public class TeamServiceImpl implements TeamService {
     public List<StudentDTO> getAvailableStudents(String courseName, String id) {
         if (!courseRepository.findById(courseName).isPresent())
             throw new CourseNotFoundException();
-        return courseRepository.getStudentsNotInTeams(courseName).stream()
+
+        List<StudentDTO> sNotInTeam = courseRepository.getStudentsNotInTeams(courseName).stream()
                 .map(student -> modelMapper.map(student,StudentDTO.class))
                 .filter(studentDTO -> !studentDTO.getId().equals(id))
                 .collect(Collectors.toList());
+
+        Set<StudentDTO> set = new LinkedHashSet<>(sNotInTeam);
+
+        List<StudentDTO> sInTeamInactive = courseRepository.getStudentsInInactiveTeams(courseName).stream()
+                .map(student -> modelMapper.map(student,StudentDTO.class))
+                .collect(Collectors.toList());
+
+        set.addAll(sInTeamInactive);
+
+        return new ArrayList<>(set);
     }
 
     @Override

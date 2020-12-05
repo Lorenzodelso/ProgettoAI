@@ -83,8 +83,7 @@ public class StudentController {
 
     @GetMapping("/{id}/teams")
     public List<TeamDTO> getTeamsForStudent(@PathVariable String id){
-        List<TeamDTO> teamDTOS = teamService.getTeamsForStudent(id);
-        return teamDTOS;
+        return teamService.getTeamsForStudent(id);
     }
 
     @GetMapping("/{id}/courses/{name}/teams")
@@ -96,11 +95,7 @@ public class StudentController {
     @GetMapping("/{id}/courses/{coursename}/hasTeam")
     public boolean studentHasTeam(@PathVariable String id, @PathVariable String coursename) {
         Optional<TeamDTO> t = teamService.getTeamForStudentByCourseName(id,coursename);
-        if(t.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return t.isPresent();
     }
 
     @GetMapping("/teams/{teamId}/members")

@@ -309,9 +309,9 @@ public class TeamServiceImpl implements TeamService {
         team.setGBDiskTot(250);
         team.setVcpuTot(4);
 
-        teamRepository.save(team);
+        Team newteam = teamRepository.save(team);
 
-        return modelMapper.map(team,TeamDTO.class);
+        return modelMapper.map(newteam,TeamDTO.class);
     }
 
     @Override

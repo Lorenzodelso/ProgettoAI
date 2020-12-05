@@ -238,6 +238,7 @@ public class TeamServiceImpl implements TeamService {
             throw new StudentNotFoundException();
         return studentRepository.findById(studentId).get().getTeams()
                 .stream()
+                .filter(t -> t.getStatus() == ATTIVO)
                 .map(team -> modelMapper.map(team,TeamDTO.class))
                 .collect(Collectors.toList());
     }
@@ -278,8 +279,7 @@ public class TeamServiceImpl implements TeamService {
         int countMembersMin = courseRepository.getOne(courseId).getMin();
         if (memberIds.size() > countMembersMax || memberIds.size() < countMembersMin)
             throw new WrongTeamDimensionExcpetion();
-        memberIds.stream()
-                .forEach( memberId -> {
+        memberIds.forEach( memberId -> {
                     List<CourseDTO> courses = getCourses(memberId);
                     if (!courses.contains(courseDTO))
                         throw new MemberNotInCourseException();
@@ -341,7 +341,6 @@ public class TeamServiceImpl implements TeamService {
 
         List<StudentDTO> sNotInTeam = courseRepository.getStudentsNotInTeams(courseName).stream()
                 .map(student -> modelMapper.map(student,StudentDTO.class))
-                .filter(studentDTO -> !studentDTO.getId().equals(id))
                 .collect(Collectors.toList());
 
         Set<StudentDTO> set = new LinkedHashSet<>(sNotInTeam);
@@ -351,6 +350,7 @@ public class TeamServiceImpl implements TeamService {
                 .collect(Collectors.toList());
 
         set.addAll(sInTeamInactive);
+        set.removeIf(s -> s.getId().equals(id));
 
         return new ArrayList<>(set);
     }
@@ -361,6 +361,15 @@ public class TeamServiceImpl implements TeamService {
         if(!teamOpt.isPresent())
             throw new TeamNotFoundException();
         teamOpt.get().setStatus(ATTIVO);
+        //TODO aggiunta nel caso ci siamo team pendenti per gli studenti per lo stesso corso
+        // non so se da problemi con i token
+        String courseName = teamOpt.get().getCourse().getName();
+        for( Student s: teamOpt.get().getMembers()){
+            for(Team t: s.getTeams()){
+                if(t.getCourse().getName().equals(courseName) && t.getStatus() == NON_ATTIVO)
+                    evictTeam(t.getId());
+            }
+        }
     }
 
     @Override
@@ -370,7 +379,6 @@ public class TeamServiceImpl implements TeamService {
             throw new TeamNotFoundException();
         Team team = teamOpt.get();
         team.getMembers()
-                .stream()
                 .forEach(teamOpt.get()::removeMember);
         teamRepository.delete(team);
     }

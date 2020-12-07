@@ -279,14 +279,20 @@ public class TeamServiceImpl implements TeamService {
         int countMembersMin = courseRepository.getOne(courseId).getMin();
         if (memberIds.size() > countMembersMax || memberIds.size() < countMembersMin)
             throw new WrongTeamDimensionExcpetion();
+
+
+
         memberIds.forEach( memberId -> {
+            Student st;
+            if(!studentRepository.existsById(memberId))
+                throw new StudentNotFoundException();
+
+            st = studentRepository.getOne(memberId);
                     List<CourseDTO> courses = getCourses(memberId);
                     if (!courses.contains(courseDTO))
                         throw new MemberNotInCourseException();
 
-            List<TeamDTO> teams = getTeamsForStudent(memberId);
-            long flag = teams.stream()
-                    .map(team -> modelMapper.map(team, Team.class))
+            long flag = st.getTeams().stream()
                     .filter(team -> team.getCourse().getName().equals(courseId))
                     .count();
 

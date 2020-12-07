@@ -119,6 +119,9 @@ public class CourseController {
             return teamDTO;
         } catch (CourseNotFoundException | StudentNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (TeamAlreadyInCourseException | MemberNotInCourseException |
+                WrongTeamDimensionExcpetion | CourseNotEnabledException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

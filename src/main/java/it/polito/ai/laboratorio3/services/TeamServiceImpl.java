@@ -293,6 +293,7 @@ public class TeamServiceImpl implements TeamService {
                         throw new MemberNotInCourseException();
 
             long flag = st.getTeams().stream()
+                    .filter(t->t.getStatus()==ATTIVO)
                     .filter(team -> team.getCourse().getName().equals(courseId))
                     .count();
 

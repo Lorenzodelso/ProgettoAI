@@ -205,7 +205,7 @@ public class StudentController {
         }
         catch (StudentNotFoundException | TeamNotFoundException | VmNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
-        } catch (MaxVmAcceseException e) {
+        } catch (MaxVmAcceseException | TooManyResourcesUsedException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }

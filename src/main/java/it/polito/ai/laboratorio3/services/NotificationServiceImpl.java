@@ -35,6 +35,7 @@ import java.util.UUID;
 
 
 @Component
+@Transactional
 public class NotificationServiceImpl implements NotificationService {
     @Bean("teamTemplateMessage")
     public SimpleMailMessage templateSimpleMessage() {
@@ -95,6 +96,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public boolean confirm(String token) {
+        System.out.println("\n\n***********\n\n");
+        System.out.println(token);
         Optional<Token> tokenOptional = tokenRepository.findById(token);
         if(!tokenOptional.isPresent())
             throw new TokenNotFoundException();
@@ -140,6 +143,8 @@ public class NotificationServiceImpl implements NotificationService {
                 throw new StudentNotFoundException();
 
             student = studentRepository.getOne(s);
+            System.out.println("\n\n********\n\n");
+            System.out.println(student.getId());
 
             String tokendId = UUID.randomUUID().toString();
             Long teamId = dto.getId();
@@ -149,10 +154,11 @@ public class NotificationServiceImpl implements NotificationService {
             token.setTeamId(teamId);
             token.setExpiryDate(expiryDate);
             token.setCourseName(courseName);
+            token = tokenRepository.save(token);
             token.setStudent(student);
-
-
+            //Adesso funziona
             tokenRepository.save(token);
+
 
             String bodyMessage = String.format(template.getText(),tokendId,tokendId);
             sendMessage("s265659@studenti.polito.it","Team confirmation",bodyMessage);

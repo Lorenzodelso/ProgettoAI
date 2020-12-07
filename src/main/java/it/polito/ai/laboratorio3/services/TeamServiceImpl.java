@@ -284,9 +284,18 @@ public class TeamServiceImpl implements TeamService {
                     if (!courses.contains(courseDTO))
                         throw new MemberNotInCourseException();
 
-                    boolean check= getTeamForCourse(courseId).containsAll(getTeamsForStudent(memberId));
+            List<TeamDTO> teams = getTeamsForStudent(memberId);
+            long flag = teams.stream()
+                    .map(team -> modelMapper.map(team, Team.class))
+                    .filter(team -> team.getCourse().getName().equals(courseId))
+                    .count();
+
+            if (flag > 0)
+                throw new TeamAlreadyInCourseException();
+
+                  /*  boolean check= getTeamForCourse(courseId).containsAll(getTeamsForStudent(memberId));
                     if(check)
-                        throw new TeamAlreadyInCourseException();
+                        throw new TeamAlreadyInCourseException();*/
                 } );
         /*long numDuplicati = memberIds.size() - (memberIds.stream().distinct().count());
         if (numDuplicati>0)
@@ -320,6 +329,7 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException();
         return courseRepository.findById(courseName).get().getTeams()
                 .stream()
+                //.filter(t-> t.getStatus() == ATTIVO)
                 .map(team -> modelMapper.map(team,TeamDTO.class))
                 .collect(Collectors.toList());
     }

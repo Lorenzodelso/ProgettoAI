@@ -115,6 +115,7 @@ public class CourseController {
             System.out.println("-------"+s);
         try {
             TeamDTO teamDTO = teamService.proposeTeam(name, team, membersIds);
+            membersIds.remove(userDetails.getUsername());
             notificationService.notifyTeam(teamDTO, membersIds, hours);
             return teamDTO;
         } catch (CourseNotFoundException | StudentNotFoundException e) {

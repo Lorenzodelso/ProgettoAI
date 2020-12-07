@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 
-@Controller
+@RestController
 @RequestMapping("/API/notification")
 public class NotificationController {
     @Autowired
@@ -28,15 +28,13 @@ public class NotificationController {
     JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/confirm/{token}")
-    public String acceptRequest(@PathVariable String token){
+    public void acceptRequest(@PathVariable String token){
         notificationService.confirm(token);
-        return "tokenAcceptedTemplate.html";
     }
 
     @GetMapping("/reject/{token}")
-    public String rejectRequest(@PathVariable String token){
+    public void rejectRequest(@PathVariable String token){
         notificationService.reject(token);
-        return "tokenRejectedTemplate.html";
     }
 
     @GetMapping("confirmRegistration/{token}")

@@ -61,7 +61,7 @@ public class Team {
     }
 
     public void removeMember(Student student){
-        members.remove(student);
+        //members.remove(student);
         student.getTeams().remove(this);
     }
 

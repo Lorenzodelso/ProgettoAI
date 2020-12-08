@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/register")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class RegistrationController {
     @Autowired
     NotificationService notificationService;

@@ -15,7 +15,7 @@ public class Token {
     @Id
     String id;
     Long teamId;
-    String studentId;
+    String sId;
     String courseName;
     Timestamp expiryDate;
     boolean confirmation;

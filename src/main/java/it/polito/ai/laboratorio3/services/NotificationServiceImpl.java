@@ -155,7 +155,7 @@ public class NotificationServiceImpl implements NotificationService {
             Token token = new Token();
             token.setId(tokendId);
             token.setTeamId(teamId);
-            token.setStudentId(s);
+            token.setSId(s);
             token.setExpiryDate(expiryDate);
             token.setCourseName(courseName);
             token = tokenRepository.save(token);

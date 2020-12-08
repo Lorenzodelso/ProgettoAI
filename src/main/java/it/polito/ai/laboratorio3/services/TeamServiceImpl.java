@@ -8,6 +8,8 @@ import it.polito.ai.laboratorio3.exceptions.*;
 import it.polito.ai.laboratorio3.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +29,15 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
+
+    public SimpleMailMessage refuseTemplateMessage(){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setText(
+                "La richiesta per la creazione del team è stata rifiutata"
+        );
+        return message;
+    }
+
     @Autowired
     StudentRepository studentRepository;
 
@@ -56,6 +67,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Autowired
     ImageRepository imageRepository;
+
+    @Autowired
+    NotificationService notificationService;
 
 
     @Override
@@ -383,6 +397,7 @@ public class TeamServiceImpl implements TeamService {
         if(!teamOpt.isPresent())
             throw new TeamNotFoundException();
         teamOpt.get().setStatus(ATTIVO);
+        tokenRepository.deleteTokenAfterActiveTeam(teamId);
         //TODO aggiunta nel caso ci siamo team pendenti per gli studenti per lo stesso corso
         // non so se da problemi con i token
         String courseName = teamOpt.get().getCourse().getName();
@@ -407,6 +422,10 @@ public class TeamServiceImpl implements TeamService {
             return;
         Team team = teamOpt.get();
         List<Student> membersToDelete = team.getMembers();
+        membersToDelete.forEach(
+                s-> notificationService.sendMessage(s.getId()+"@studenti.polito.it",
+                        "Team Rifiutato",refuseTemplateMessage().getText())
+        );
 
         membersToDelete.forEach( member -> teamOpt.get().removeMember(member));
         teamRepository.delete(team);

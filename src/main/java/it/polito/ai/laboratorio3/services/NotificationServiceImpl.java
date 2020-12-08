@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Array;
 import java.sql.Timestamp;
@@ -54,6 +55,7 @@ public class NotificationServiceImpl implements NotificationService {
         );
         return message;
     }
+
 
     @Autowired
     public JavaMailSender emailSender;
@@ -105,15 +107,16 @@ public class NotificationServiceImpl implements NotificationService {
             if (!tokenOptional.get().getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now())))
                 throw new TokenExpiredException();
         }
-        tokenRepository.delete(tokenOptional.get());
-
+        //tokenRepository.delete(tokenOptional.get());
+        tokenOptional.get().setConfirmation(true);
         Long teamId = tokenOptional.get().getTeamId();
         List<Token> teamTokens = tokenRepository.findAllByTeamId(teamId);
-        if(teamTokens.isEmpty()){
-            teamService.activeTeam(teamId);
-            return true;
+        for(Token teamToken: teamTokens){
+            if(!teamToken.isConfirmation())
+                return false;
         }
-        return false;
+        teamService.activeTeam(teamId);
+        return true;
     }
 
     @Override

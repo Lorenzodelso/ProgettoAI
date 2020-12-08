@@ -20,6 +20,12 @@ public interface TokenRepository extends JpaRepository<Token,String> {
     @Modifying
     void deleteExpiredToken(Timestamp t);
 
+    @Query("DELETE FROM Token token WHERE token.teamId = :teamid")
+    @Transactional
+    @Modifying
+    void deleteTokenAfterActiveTeam(Long teamid);
+
     @Query("SELECT token FROM Token token WHERE token.teamId=:teamId")
     List<Token>findAllByTeamId(Long teamId);
+
 }

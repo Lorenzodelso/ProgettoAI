@@ -12,6 +12,7 @@ public class TokenDTO {
     String id;
     Long teamId;
     Timestamp expiryDate;
+    boolean confirmation;
 
     public TokenDTO (){}
 }

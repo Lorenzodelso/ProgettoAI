@@ -17,6 +17,7 @@ public class Token {
     Long teamId;
     String courseName;
     Timestamp expiryDate;
+    boolean confirmation;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Student student;

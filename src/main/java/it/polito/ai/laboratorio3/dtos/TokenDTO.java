@@ -11,6 +11,8 @@ public class TokenDTO {
 
     String id;
     Long teamId;
+    String studentId;
+    String courseName;
     Timestamp expiryDate;
     boolean confirmation;
 

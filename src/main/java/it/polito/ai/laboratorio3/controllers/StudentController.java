@@ -103,6 +103,15 @@ public class StudentController {
         return teamService.getMembers(Long.valueOf(teamId));
     }
 
+    @GetMapping("/teams/{teamId}/request")
+    public List<TokenDTO> getTeamRequests(@PathVariable String teamId) {
+       try{
+           return teamService.getRequestsByTeamId(Long.valueOf(teamId));
+       }catch (TeamNotFoundException e){
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+       }
+
+    }
 
     @GetMapping("/{id}/courses/{name}/requests")
     public List<TokenDTO> getRequests (@PathVariable String id, @PathVariable String name){

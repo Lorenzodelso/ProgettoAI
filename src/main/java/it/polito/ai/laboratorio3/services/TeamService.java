@@ -134,5 +134,6 @@ public interface TeamService {
     void uploadVmParamsByStudent(String id, Long teamId, Long vmId, Map<String, Integer> data);
 
     List<ImageDTO> getMyStorical(String name, String id,Long taskId, Long essayId);
-
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    List<TokenDTO> getRequestsByTeamId(Long teamId);
 }

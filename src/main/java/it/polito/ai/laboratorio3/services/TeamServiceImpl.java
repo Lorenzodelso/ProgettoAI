@@ -1084,4 +1084,13 @@ public class TeamServiceImpl implements TeamService {
                 .map(i-> modelMapper.map(i,ImageDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<TokenDTO> getRequestsByTeamId(Long teamId) {
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+         return tokenRepository.findTokenByTeamId(teamId).stream()
+                 .map(t-> modelMapper.map(t,TokenDTO.class))
+                 .collect(Collectors.toList());
+    }
 }

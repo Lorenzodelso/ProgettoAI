@@ -155,6 +155,7 @@ public class NotificationServiceImpl implements NotificationService {
             Token token = new Token();
             token.setId(tokendId);
             token.setTeamId(teamId);
+            token.setStudentId(s);
             token.setExpiryDate(expiryDate);
             token.setCourseName(courseName);
             token = tokenRepository.save(token);
@@ -164,7 +165,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 
             String bodyMessage = String.format(template.getText(),tokendId,tokendId);
-            sendMessage("s265659@studenti.polito.it","Team confirmation",bodyMessage);
+            sendMessage(s+"@studenti.polito.it","Team confirmation",bodyMessage);
         }
     }
 

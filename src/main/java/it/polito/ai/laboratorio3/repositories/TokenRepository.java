@@ -15,6 +15,9 @@ public interface TokenRepository extends JpaRepository<Token,String> {
     @Query("SELECT token FROM Token token WHERE token.expiryDate > :t")
     List<Token> findAllByExpiryBefore(Timestamp t);
 
+    @Query("SELECT token FROM Token token WHERE token.teamId = :teamid")
+    List<Token> findTokenByTeamId(Long teamid);
+
     @Query("DELETE FROM Token token WHERE token.expiryDate < :t")
     @Transactional
     @Modifying

@@ -1030,12 +1030,14 @@ public class TeamServiceImpl implements TeamService {
         if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
             throw new StudentHasNotPrivilegeException();
 
+        List<Student> newOwnersList = new ArrayList<>();
         for(String studId: ownerList){
-            if(!studentRepository.existsById(id))
+            if(!studentRepository.existsById(studId))
                 throw new StudentNotFoundException();
-            Student studentToBeAddedAsOwner = studentRepository.getOne(id);
-            vm.addOwner(studentToBeAddedAsOwner);
+            Student studentToBeAddedAsOwner = studentRepository.getOne(studId);
+            newOwnersList.add(studentToBeAddedAsOwner);
         }
+        vm.changeOwnerList(newOwnersList);
     }
 
     @Override

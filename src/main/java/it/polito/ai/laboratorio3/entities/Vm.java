@@ -43,4 +43,15 @@ public class Vm {
             student.addVm(this);
         }
     }
+
+    public void changeOwnerList(List<Student> studentList){
+        for(Student st: owners){
+            st.removeVm(this);
+        }
+        owners.clear();
+        owners = studentList;
+        for(Student st: owners){
+            st.addVm(this);
+        }
+    }
 }

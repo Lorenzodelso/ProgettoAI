@@ -70,4 +70,10 @@ public class Student {
             vm.addOwner(this);
         }
     }
+
+    public void removeVm(Vm vm){
+        if(vms.contains(vm)){
+            vms.remove(vm);
+        }
+    }
 }

@@ -1037,6 +1037,7 @@ public class TeamServiceImpl implements TeamService {
             Student studentToBeAddedAsOwner = studentRepository.getOne(studId);
             newOwnersList.add(studentToBeAddedAsOwner);
         }
+        newOwnersList.add(student);
         vm.changeOwnerList(newOwnersList);
     }
 

@@ -96,7 +96,6 @@ public class NotificationServiceImpl implements NotificationService {
         emailSender.send(message);
     }
 
-
     @Override
     public boolean confirm(String token) {
         System.out.println("\n\n***********\n\n");

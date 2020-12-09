@@ -132,8 +132,11 @@ public interface TeamService {
     EssayDTO loadFirstEssay(String name, Long taskId, String username);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     void uploadVmParamsByStudent(String id, Long teamId, Long vmId, Map<String, Integer> data);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    void addVmOwner(String id, Long teamId, Long vmId, List<String> ownerList);
 
     List<ImageDTO> getMyStorical(String name, String id,Long taskId, Long essayId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<TokenDTO> getRequestsByTeamId(Long teamId);
+    List<StudentRequestDTO> getMembersByRequest(String id, Long teamId, String name);
 }

@@ -219,6 +219,23 @@ public class StudentController {
         }
     }
 
+    @PutMapping("/{id}/teams/{teamId}/vms/{vmId}/addOwner")
+    public void addOwnersToVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody List<String> ownerList){
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
+
+        try {
+            teamService.addVmOwner(id, Long.valueOf(teamId), Long.valueOf(vmId), ownerList);
+        }
+        catch (StudentNotFoundException | TeamNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+        catch (StudentHasNotPrivilegeException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
+    }
+
+
     /*
     @GetMapping("/{id}/image")
     public ResponseEntity<Resource> getImage (@PathVariable String id){

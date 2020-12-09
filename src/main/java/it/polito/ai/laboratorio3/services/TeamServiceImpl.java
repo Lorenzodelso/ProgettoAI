@@ -1007,8 +1007,35 @@ public class TeamServiceImpl implements TeamService {
             vm.setGBRam(data.get("gbram"));
         if (data.containsKey("gbdisk"))
             vm.setGBDisk(data.get("gbdisk"));
-       team.aggiornaRisorseTotali();
+       //team.aggiornaRisorseTotali();
+    }
 
+    @Override
+    public void addVmOwner(String id, Long teamId, Long vmId, List<String> ownerList) {
+        if(!studentRepository.existsById(id))
+            throw new StudentNotFoundException();
+        Student student = studentRepository.getOne(id);
+
+        if(student.getTeams().stream().noneMatch(t-> t.getId().equals(teamId)))
+            throw new TeamNotFoundException();
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException();
+        Team team = teamRepository.getOne(teamId);
+        if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
+            throw new VmNotFoundException();
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException();
+        Vm vm = vmRepository.getOne(vmId);
+
+        if(vm.getOwners().stream().noneMatch(s-> s.getId().equals(id)))
+            throw new StudentHasNotPrivilegeException();
+
+        for(String studId: ownerList){
+            if(!studentRepository.existsById(id))
+                throw new StudentNotFoundException();
+            Student studentToBeAddedAsOwner = studentRepository.getOne(id);
+            vm.addOwner(studentToBeAddedAsOwner);
+        }
     }
 
     @Override
@@ -1092,5 +1119,42 @@ public class TeamServiceImpl implements TeamService {
          return tokenRepository.findTokenByTeamId(teamId).stream()
                  .map(t-> modelMapper.map(t,TokenDTO.class))
                  .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentRequestDTO> getMembersByRequest(String id, Long teamId, String name) {
+        List<StudentDTO> studs = getMembers(Long.valueOf(teamId));
+        studs.removeIf(s -> s.getId().equals(id));
+        Map<StudentDTO, String> mappa = new HashMap<>();
+        List<StudentRequestDTO> studRequest = new ArrayList<>();
+        studs.forEach(s -> {
+            List<TokenDTO> tokens = tokenRepository.findTokenByTeamId(teamId).stream()
+                    .filter( t -> t.getSId().equals(s.getId()))
+                    .map(t -> modelMapper.map(t, TokenDTO.class))
+                    .collect(Collectors.toList());
+
+            boolean flag;
+            String confirm;
+            if(tokens.isEmpty()) //Se siamo qui, vuol dire che questo studente è il creatore
+                confirm="Creatore";
+            else {
+                //se sono qui, è un membro
+                flag = tokens.get(0).isConfirmation();
+
+                if(flag == false )
+                    confirm = "Pendente";
+                else
+                    confirm = "Confermato"; }
+            StudentRequestDTO stud= new StudentRequestDTO();
+            stud.setName(s.getName());
+            stud.setFirstName(s.getFirstName());
+            stud.setId(s.getId());
+            stud.setStato(confirm);
+            studRequest.add(stud);
+            //mappa.put(s, confirm);
+
+        });
+
+        return studRequest;
     }
 }

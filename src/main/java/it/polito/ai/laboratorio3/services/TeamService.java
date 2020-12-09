@@ -138,5 +138,8 @@ public interface TeamService {
     List<ImageDTO> getMyStorical(String name, String id,Long taskId, Long essayId);
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<TokenDTO> getRequestsByTeamId(Long teamId);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     List<StudentRequestDTO> getMembersByRequest(String id, Long teamId, String name);
+    @PreAuthorize("hasAuthority('ROLE_STUDENT')")
+    boolean isOwner(String id,Long teamId, Long vmId);
 }

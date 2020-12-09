@@ -235,6 +235,13 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{id}/teams/{teamId}/vms/{vmId}/isOwner")
+    public boolean isOwner(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails) {
+        if(!id.equals(userDetails.getUsername()))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Forbidden");
+        return teamService.isOwner(id,Long.valueOf(teamId),Long.valueOf(vmId));
+    }
+
 
     /*
     @GetMapping("/{id}/image")

@@ -107,7 +107,6 @@ public class NotificationServiceImpl implements NotificationService {
             if (!tokenOptional.get().getExpiryDate().after(Timestamp.valueOf(LocalDateTime.now())))
                 throw new TokenExpiredException();
         }
-        //tokenRepository.delete(tokenOptional.get());
         tokenOptional.get().setConfirmation(true);
         Long teamId = tokenOptional.get().getTeamId();
         List<Token> teamTokens = tokenRepository.findAllByTeamId(teamId);
@@ -118,6 +117,7 @@ public class NotificationServiceImpl implements NotificationService {
         teamService.activeTeam(teamId);
         return true;
     }
+
 
     @Override
     public boolean reject(String token) {

@@ -1020,6 +1020,7 @@ public class TeamServiceImpl implements TeamService {
             throw new TeamNotFoundException();
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException();
+
         Team team = teamRepository.getOne(teamId);
         if(team.getVms().stream().noneMatch(v-> v.getId().equals(vmId)))
             throw new VmNotFoundException();

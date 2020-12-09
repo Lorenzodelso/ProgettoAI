@@ -379,4 +379,9 @@ public class CourseController {
         }
     }
 
+    @GetMapping("/{name}/student/{id}/teams/{teamId}/membersPerRequest")
+    public List<StudentRequestDTO> getMembersPerRequest(@PathVariable String id, @PathVariable String teamId, @PathVariable String name) {
+        return teamService.getMembersByRequest(id, Long.valueOf(teamId), name);
+    }
+
 }

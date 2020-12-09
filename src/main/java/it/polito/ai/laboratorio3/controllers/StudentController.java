@@ -220,10 +220,10 @@ public class StudentController {
     }
 
     @PutMapping("/{id}/teams/{teamId}/vms/{vmId}/addOwner")
-    public void addOwnersToVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestBody List<String> ownerList){
+    public void addOwnersToVm(@PathVariable String id, @PathVariable String teamId, @PathVariable String vmId, @AuthenticationPrincipal UserDetails userDetails, @RequestParam("ownerList") List<String> ownerList){
         if(!id.equals(userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You must update a vm with your Id");
-
+        System.out.println(ownerList);
         try {
             teamService.addVmOwner(id, Long.valueOf(teamId), Long.valueOf(vmId), ownerList);
         }

@@ -114,7 +114,8 @@ public class CourseController {
         for(String s : membersIds)
             System.out.println("-------"+s);
         try {
-            TeamDTO teamDTO = teamService.proposeTeam(name, team, membersIds);
+            String creator = userDetails.getUsername();
+            TeamDTO teamDTO = teamService.proposeTeam(name, team, membersIds,creator);
             membersIds.remove(userDetails.getUsername());
             notificationService.notifyTeam(teamDTO, membersIds, hours);
             return teamDTO;
@@ -383,5 +384,6 @@ public class CourseController {
     public List<StudentRequestDTO> getMembersPerRequest(@PathVariable String id, @PathVariable String teamId, @PathVariable String name) {
         return teamService.getMembersByRequest(id, Long.valueOf(teamId), name);
     }
+
 
 }

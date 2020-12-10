@@ -283,7 +283,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamDTO proposeTeam(String courseId, String name, List<String> memberIds) {
+    public TeamDTO proposeTeam(String courseId, String name, List<String> memberIds, String creator) {
         if (!courseRepository.findById(courseId).isPresent())
             throw new CourseNotFoundException();
         CourseDTO courseDTO = modelMapper.map( courseRepository.getOne(courseId) , CourseDTO.class );
@@ -293,8 +293,12 @@ public class TeamServiceImpl implements TeamService {
         int countMembersMin = courseRepository.getOne(courseId).getMin();
         if (memberIds.size() > countMembersMax || memberIds.size() < countMembersMin)
             throw new WrongTeamDimensionExcpetion();
-
-
+        List<Team> tx = teamRepository.findTeamsByName(name).stream()
+                .filter(txx -> txx.getCourse().getName().equals(courseId))
+                .collect(Collectors.toList());
+        if(!tx.isEmpty())
+        //SE ENTRIAMO QUI, ESISTE GIA UN GRUPPO CON LO STESSO NOME
+            throw new TeamNameAlreadyInCourseExceptions();
 
         memberIds.forEach( memberId -> {
             Student st;
@@ -325,6 +329,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = new Team();
         team.setCourse(courseRepository.getOne(courseId));
         team.setName(name);
+        team.setIdCreator(creator);
         if(memberIds.size()==1)
             //TEAM COMPOSTO DA 1 PERSONA
             team.setStatus(ATTIVO);
@@ -445,6 +450,23 @@ public class TeamServiceImpl implements TeamService {
                 .map(req-> modelMapper.map(req, TokenDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<TeamDTO> getMyRequestsAsCreator(String idCreator, String coursename) {
+        tokenRepository.deleteExpiredToken(Timestamp.valueOf(LocalDateTime.now()));
+        Optional<Student> studentOpt = studentRepository.findById(idCreator);
+        if (!studentOpt.isPresent())
+            throw new StudentNotFoundException();
+        //cerco team con creator = id
+        List<Team> teams = teamRepository.findTeamsByIdCreator(idCreator);
+        System.out.println(teams.size());
+        return teams.stream()
+                .filter(t-> t.getCourse().getName().equals(coursename))
+                .map(v-> modelMapper.map(v,TeamDTO.class))
+                .collect(Collectors.toList());
+
+    }
+
 
 
     @Override
@@ -1129,7 +1151,6 @@ public class TeamServiceImpl implements TeamService {
     public List<StudentRequestDTO> getMembersByRequest(String id, Long teamId, String name) {
         List<StudentDTO> studs = getMembers(Long.valueOf(teamId));
         studs.removeIf(s -> s.getId().equals(id));
-        Map<StudentDTO, String> mappa = new HashMap<>();
         List<StudentRequestDTO> studRequest = new ArrayList<>();
         studs.forEach(s -> {
             List<TokenDTO> tokens = tokenRepository.findTokenByTeamId(teamId).stream()
@@ -1161,6 +1182,8 @@ public class TeamServiceImpl implements TeamService {
 
         return studRequest;
     }
+
+
     public boolean isOwner(String id,Long teamId, Long vmId) {
         if(!studentRepository.existsById(id))
             throw new StudentNotFoundException();

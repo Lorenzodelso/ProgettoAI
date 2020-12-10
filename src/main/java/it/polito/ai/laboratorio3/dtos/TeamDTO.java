@@ -17,6 +17,7 @@ public class TeamDTO {
     private int GBRamUsati;
     private int maxVmAccese;
     private int vmAccese;
+    private String idCreator;
 
     public TeamDTO(){}
 }

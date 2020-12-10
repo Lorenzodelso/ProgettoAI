@@ -55,7 +55,7 @@ public interface TeamService {
     List<StudentDTO>getMembers(Long TeamId);
 
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
-    TeamDTO proposeTeam(String courseId, String name, List<String> memberIds);
+    TeamDTO proposeTeam(String courseId, String name, List<String> memberIds,String creator);
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     List<TeamDTO> getTeamForCourse(String courseName);
@@ -71,6 +71,7 @@ public interface TeamService {
 
 
     List<TokenDTO> getRequestsForStudent(String id, String name);
+    List<TeamDTO> getMyRequestsAsCreator(String idCreator, String coursename);
 
     String getCourseNameByTeamId(Long id);
 

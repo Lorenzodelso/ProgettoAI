@@ -40,6 +40,7 @@ public class Team {
     private int GBRamUsati;
     private int maxVmAccese;
     private int vmAccese;
+    private String idCreator;
 
     @OneToMany(mappedBy = "team")
     private List<Vm> vms = new ArrayList<>();

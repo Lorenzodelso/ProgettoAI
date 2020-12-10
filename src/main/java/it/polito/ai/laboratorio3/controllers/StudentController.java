@@ -119,6 +119,14 @@ public class StudentController {
         return tokens;
     }
 
+    @GetMapping("/{idCreator}/courses/{coursename}/myRequestsAsCreator")
+    public List<TeamDTO> getMyRequests (@PathVariable String idCreator, @PathVariable String coursename){
+        List<TeamDTO> teams = teamService.getMyRequestsAsCreator(idCreator, coursename);
+        return teams;
+    }
+
+
+
     @GetMapping("/{id}/teams/{teamId}/vms")
     public List<VmDTO> getVms (@PathVariable String id, @PathVariable String teamId){
         try {

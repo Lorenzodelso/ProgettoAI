@@ -174,7 +174,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void notifyRegistration(UserDTO userDTO) {
         System.out.println(userDTO);
         String[] username = userDTO.getEmail().split("@");
-        if(userRepository.existsById(username[1]))
+        if(userRepository.existsById(username[0]))
             throw new UserAlreadyRegisterException();
         if(username[1].startsWith("polito.it") || username[1].startsWith("studenti.polito.it"))
         {

@@ -22,6 +22,8 @@ public class RegistrationController {
         try{
             if(check[1].startsWith("studenti.polito.it") ||check[1].startsWith("polito.it") )
                 notificationService.notifyRegistration(userDTO);
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong mail");
         } catch (UserAlreadyRegisterException e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
         }

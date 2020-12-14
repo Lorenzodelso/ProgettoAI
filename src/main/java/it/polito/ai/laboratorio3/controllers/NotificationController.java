@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
 
-@RestController
+@Controller
 @RequestMapping("/API/notification")
 public class NotificationController {
     @Autowired
@@ -28,22 +28,37 @@ public class NotificationController {
     JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/confirm/{token}")
-    public void acceptRequest(@PathVariable String token){
-        notificationService.confirm(token);
+    public String acceptRequest(@PathVariable String token){
+       try {
+           notificationService.confirm(token);
+           return "tokenAcceptedTemplate.html";
+       }
+       catch (Exception e) {
+           return "errorTemplate.html";
+       }
     }
 
     @GetMapping("/reject/{token}")
-    public void rejectRequest(@PathVariable String token){
-        notificationService.reject(token);
+    public String rejectRequest(@PathVariable String token){
+
+        try {
+            notificationService.reject(token);
+            return "tokenRejectedTemplate.html";
+        }
+        catch (Exception e) {
+            return "errorTemplate.html";
+        }
     }
 
     @GetMapping("confirmRegistration/{token}")
-    public ResponseEntity acceptRegistration(@PathVariable String token){
-        User userDetails = (User) notificationService.confirmRegistration(token);
-        String jwt = jwtTokenProvider.createToken(userDetails.getUsername(),userDetails.getRoles());
-        Map<Object, Object> model = new HashMap<>();
-        model.put("username", userDetails.getUsername());
-        model.put("token", jwt);
-        return ok(model);
+    public String acceptRegistration(@PathVariable String token){
+
+        try {
+            notificationService.confirmRegistration(token);
+            return "registrationAcceptedTemplate.html";
+        }
+        catch (Exception e) {
+            return "errorTemplate.html";
+        }
     }
 }

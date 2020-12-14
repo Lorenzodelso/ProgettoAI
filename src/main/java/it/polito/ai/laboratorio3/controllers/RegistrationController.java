@@ -1,9 +1,12 @@
 package it.polito.ai.laboratorio3.controllers;
 
 import it.polito.ai.laboratorio3.dtos.UserDTO;
+import it.polito.ai.laboratorio3.exceptions.UserAlreadyRegisterException;
 import it.polito.ai.laboratorio3.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/register")
@@ -16,7 +19,11 @@ public class RegistrationController {
     public void register(@RequestBody UserDTO userDTO){
 
         String[] check = userDTO.getEmail().split("@");
-        if(check[1].startsWith("studenti.polito.it") ||check[1].startsWith("polito.it") )
-        notificationService.notifyRegistration(userDTO);
+        try{
+            if(check[1].startsWith("studenti.polito.it") ||check[1].startsWith("polito.it") )
+                notificationService.notifyRegistration(userDTO);
+        } catch (UserAlreadyRegisterException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
 }

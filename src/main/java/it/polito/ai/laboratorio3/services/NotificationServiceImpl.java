@@ -11,6 +11,7 @@ import it.polito.ai.laboratorio3.entities.User;
 import it.polito.ai.laboratorio3.exceptions.StudentNotFoundException;
 import it.polito.ai.laboratorio3.exceptions.TokenExpiredException;
 import it.polito.ai.laboratorio3.exceptions.TokenNotFoundException;
+import it.polito.ai.laboratorio3.exceptions.UserAlreadyRegisterException;
 import it.polito.ai.laboratorio3.repositories.RegistrationTokenRepository;
 import it.polito.ai.laboratorio3.repositories.StudentRepository;
 import it.polito.ai.laboratorio3.repositories.TokenRepository;
@@ -173,10 +174,12 @@ public class NotificationServiceImpl implements NotificationService {
     public void notifyRegistration(UserDTO userDTO) {
         System.out.println(userDTO);
         String[] username = userDTO.getEmail().split("@");
+        if(userRepository.existsById(username[1]))
+            throw new UserAlreadyRegisterException();
         if(username[1].startsWith("polito.it") || username[1].startsWith("studenti.polito.it"))
         {
         String tokenId = UUID.randomUUID().toString();
-        Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(1));
+        Timestamp expiryDate = Timestamp.valueOf(LocalDateTime.now().plusHours(24));
         RegistrationToken token = new RegistrationToken();
         token.setId(tokenId);
         token.setExpirationDate(expiryDate);

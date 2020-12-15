@@ -22,7 +22,7 @@ import java.util.List;
 public class JwtTokenProvider {
     @Value("${security.jwt.token.secret-key:secret}")
     private String secretKey = "secret";
-    @Value("${security.jwt.token.expire-length:3600000}")
+    @Value("${security.jwt.token.expire-length:360000}")
     private long validityInMilliseconds = 3600000; // 1h
     @Qualifier("customUserDetailsService")
     @Autowired
@@ -37,6 +37,11 @@ public class JwtTokenProvider {
         claims.put("roles", roles);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        System.out.println("\n*****Validity******\n");
+        System.out.println(validity);
+        System.out.println("\n*****Fine Validity******\n");
+
         return Jwts.builder()//
                 .setClaims(claims)//
                 .setIssuedAt(now)//
@@ -66,7 +71,8 @@ public class JwtTokenProvider {
             }
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
+            //throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
+            return false;
         }
     }
 }

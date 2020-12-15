@@ -2,6 +2,7 @@ package it.polito.ai.laboratorio3.controllers;
 
 import it.polito.ai.laboratorio3.dtos.*;
 import it.polito.ai.laboratorio3.exceptions.*;
+import it.polito.ai.laboratorio3.services.NotificationService;
 import it.polito.ai.laboratorio3.services.TeamService;
 import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
@@ -31,6 +32,8 @@ public class StudentController {
     TeamService teamService;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping({"","/"})
     public List<StudentDTO> all(){
@@ -251,17 +254,23 @@ public class StudentController {
     }
 
 
-    /*
-    @GetMapping("/{id}/image")
-    public ResponseEntity<Resource> getImage (@PathVariable String id){
-        try{
-            byte[] file = teamService.getImage(id);
-            return ResponseEntity.ok().body(new ByteArrayResource(file));
-        }
-        catch (StudentNotFoundException e){
+    //Accetta o rifiuta gruppo ( REST ) dalla tabela
+
+    @GetMapping("/confirm/{token}")
+    public void acceptRequest(@PathVariable String token){
+       try {
+           notificationService.confirm(token);
+       } catch (TokenNotFoundException | TokenExpiredException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
     }
 
-     */
+    @GetMapping("/reject/{token}")
+    public void rejectRequest(@PathVariable String token){
+        try {
+            notificationService.reject(token);
+        } catch (TokenNotFoundException | TokenExpiredException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+        }
+    }
 }

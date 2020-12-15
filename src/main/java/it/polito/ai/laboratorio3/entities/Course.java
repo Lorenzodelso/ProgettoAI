@@ -72,13 +72,12 @@ public class Course {
         for(Docente d: docenti)
             d.removeCourse(this);
 
-        //DA PROVARE SENZA, IN CASO NON FUNZIONASSE SCOMMENTARE
-        /*
+
         for(Team t: teams)
             t.removeCourse();
         for (Task ta: tasks)
             ta.removeCourse();
 
-         */
+
     }
 }

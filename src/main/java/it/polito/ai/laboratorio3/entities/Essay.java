@@ -21,7 +21,7 @@ public class Essay {
     private String idStudente;
     private Timestamp lastModified;
 
-    @OneToMany(mappedBy = "essay")
+    @OneToMany(mappedBy = "essay", cascade = {CascadeType.REMOVE})
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
@@ -44,6 +44,10 @@ public class Essay {
     public void addImage(Image image){
         images.add(image);
         image.setEssay(this);
+    }
+
+    public void removeTask(){
+        task = null;
     }
 
 }

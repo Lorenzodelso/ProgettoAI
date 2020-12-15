@@ -31,4 +31,5 @@ public class Task {
     public void addEssay(Essay essay) {
         this.essays.add(essay);
     }
+    public void removeCourse(){ this.course = null;}
 }

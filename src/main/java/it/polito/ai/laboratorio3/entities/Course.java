@@ -32,11 +32,11 @@ public class Course {
     @ManyToMany(mappedBy = "courses")
     private List<Docente> docenti = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.REMOVE})
     private List<Team> teams = new ArrayList<>();
 
     //Progetto
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.REMOVE})
     private List<Task> tasks = new ArrayList<>();
 
     public void addStudent(Student student){
@@ -64,5 +64,21 @@ public class Course {
     public void addTask(Task task) {
         if(!this.tasks.contains(task))
             this.tasks.add(task);
+    }
+
+    public void deleteDependences(){
+        for(Student s: students)
+            s.removeCourse(this);
+        for(Docente d: docenti)
+            d.removeCourse(this);
+
+        //DA PROVARE SENZA, IN CASO NON FUNZIONASSE SCOMMENTARE
+        /*
+        for(Team t: teams)
+            t.removeCourse();
+        for (Task ta: tasks)
+            ta.removeCourse();
+
+         */
     }
 }

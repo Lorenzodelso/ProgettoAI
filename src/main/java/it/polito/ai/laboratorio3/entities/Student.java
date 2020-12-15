@@ -76,4 +76,9 @@ public class Student {
             vms.remove(vm);
         }
     }
+
+    public void removeCourse(Course course){
+        if(courses.contains(course))
+            courses.remove(course);
+    }
 }

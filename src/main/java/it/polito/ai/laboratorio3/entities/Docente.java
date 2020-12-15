@@ -28,9 +28,14 @@ public class Docente{
     public void addCourse(Course course){
         if(courses.contains(course))
             return;
-        
+
         courses.add(course);
         course.addDocente(this);
+    }
+
+    public void removeCourse(Course course){
+        if(courses.contains(course))
+            courses.remove(course);
     }
 
 }

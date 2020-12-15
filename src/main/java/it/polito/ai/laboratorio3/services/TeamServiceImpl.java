@@ -489,6 +489,7 @@ public class TeamServiceImpl implements TeamService {
                 .count() < 1)
             throw new DocenteHasNotPrivilegeException();
 
+        course.deleteDependences();
         courseRepository.delete(course);
     }
 

@@ -80,4 +80,8 @@ public class Team {
         setGBRamTot(gbramtotali.get());
     }
 
+    public void removeCourse(){
+        course = null;
+    }
+
 }

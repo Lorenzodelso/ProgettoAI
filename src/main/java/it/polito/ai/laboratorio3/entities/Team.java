@@ -42,7 +42,7 @@ public class Team {
     private int vmAccese;
     private String idCreator;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = {CascadeType.REMOVE})
     private List<Vm> vms = new ArrayList<>();
 
     public void setCourse(Course course){

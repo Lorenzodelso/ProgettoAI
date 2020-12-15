@@ -56,6 +56,7 @@ public class Vm {
     }
 
     public void removeTeam(){
+        owners.clear();
         this.team = null;
     }
 }

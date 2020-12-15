@@ -82,7 +82,9 @@ public class Team {
 
     public void removeCourse(){
         course = null;
-
+        for (Vm v: vms)
+            v.removeTeam();
+        members.clear();
     }
 
 }

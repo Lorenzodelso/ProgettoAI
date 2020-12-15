@@ -54,4 +54,8 @@ public class Vm {
             st.addVm(this);
         }
     }
+
+    public void removeTeam(){
+        this.team = null;
+    }
 }

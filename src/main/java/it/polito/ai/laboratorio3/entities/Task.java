@@ -25,7 +25,7 @@ public class Task {
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Docente docente;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = {CascadeType.REMOVE})
     private List<Essay> essays = new ArrayList<>();
 
     public void addEssay(Essay essay) {

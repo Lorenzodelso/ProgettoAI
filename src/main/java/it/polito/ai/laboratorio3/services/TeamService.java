@@ -32,10 +32,10 @@ public interface TeamService {
     boolean addStudentToCourse(String studentId, String courseName);
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
-    void enableCourse(String courseName);
+    void enableCourse(String courseName, String docenteId);
 
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
-    void disableCourse(String courseName);
+    void disableCourse(String courseName, String docenteId);
 
     List<Boolean> addAll(List<StudentDTO> students);
     List<Boolean> enrollAll(List<String> studentIds, String courseName);

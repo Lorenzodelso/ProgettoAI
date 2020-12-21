@@ -180,18 +180,27 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    //TODO solo l'owner del corso può abilitare e disabilitare il corso
-    public void enableCourse(String courseName) {
+    public void enableCourse(String courseName, String docenteId) {
         if (!courseRepository.findById(courseName).isPresent())
             throw new CourseNotFoundException();
-        courseRepository.getOne(courseName).setEnabled(true);
+        Course course = courseRepository.getOne(courseName);
+        if(course.getDocenti().stream()
+                .filter(doc-> doc.getId().equals(docenteId))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+        course.setEnabled(true);
     }
 
     @Override
-    public void disableCourse(String courseName) {
+    public void disableCourse(String courseName, String docenteId) {
         if (!courseRepository.findById(courseName).isPresent())
             throw new CourseNotFoundException();
-        courseRepository.getOne(courseName).setEnabled(false);
+        Course course = courseRepository.getOne(courseName);
+        if(course.getDocenti().stream()
+                .filter(doc-> doc.getId().equals(docenteId))
+                .count() < 1)
+            throw new DocenteHasNotPrivilegeException();
+        course.setEnabled(false);
     }
 
     @Override
@@ -403,8 +412,6 @@ public class TeamServiceImpl implements TeamService {
             throw new TeamNotFoundException();
         teamOpt.get().setStatus(ATTIVO);
         tokenRepository.deleteTokenAfterActiveTeam(teamId);
-        //TODO aggiunta nel caso ci siamo team pendenti per gli studenti per lo stesso corso
-        // non so se da problemi con i token
         String courseName = teamOpt.get().getCourse().getName();
         List<Long> teamIds = new ArrayList<>();
         for( Student s: teamOpt.get().getMembers()){

@@ -128,15 +128,15 @@ public class CourseController {
     }
 
     @GetMapping("/{name}/enableCourse")
-    public CourseDTO enableCourse(@PathVariable String name) {
-        teamService.enableCourse(name);
+    public CourseDTO enableCourse(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails) {
+        teamService.enableCourse(name, userDetails.getUsername());
         Optional<CourseDTO> courseDTO = teamService.getCourse(name);
         return enrich(courseDTO.get());
     }
 
     @GetMapping("/{name}/disableCourse")
-    public CourseDTO disableCourse(@PathVariable String name) {
-        teamService.disableCourse(name);
+    public CourseDTO disableCourse(@PathVariable String name, @AuthenticationPrincipal UserDetails userDetails) {
+        teamService.disableCourse(name, userDetails.getUsername());
         Optional<CourseDTO> courseDTO = teamService.getCourse(name);
         return enrich(courseDTO.get());
     }

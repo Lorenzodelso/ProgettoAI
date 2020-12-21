@@ -1000,6 +1000,7 @@ public class TeamServiceImpl implements TeamService {
         essay = essayRepository.save(essay);
         essay.setStudent(student);
         essay.setTask(task);
+        essay.setLastModified(Timestamp.from(Instant.now()));
         return modelMapper.map(essay,EssayDTO.class);
     }
 

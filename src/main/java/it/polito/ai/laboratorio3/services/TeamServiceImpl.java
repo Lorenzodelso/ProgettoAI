@@ -1080,6 +1080,10 @@ public class TeamServiceImpl implements TeamService {
             throw new TaskNotFoundException();
         }
         Task task = taskOpt.get();
+
+        if( task.getDataScadenza().after(new Timestamp(System.currentTimeMillis())))
+            throw new TaskExpiredException();
+
         if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))
             throw new EssayNotFoundException();
         Essay essay = essayRepository.getOne(essayId);

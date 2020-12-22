@@ -356,6 +356,9 @@ public class CourseController {
         catch (EssayNotFoundException | TaskNotFoundException | EssayNotLoadedByStudentException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
         }
+        catch (TaskExpiredException | EssayNotModifiableException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
 
     @PutMapping("/{name}/tasks/{taskId}/essays/{essayId}/valuta")

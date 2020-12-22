@@ -1081,7 +1081,7 @@ public class TeamServiceImpl implements TeamService {
         }
         Task task = taskOpt.get();
 
-        if( task.getDataScadenza().after(new Timestamp(System.currentTimeMillis())))
+        if( task.getDataScadenza().before(new Timestamp(System.currentTimeMillis())))
             throw new TaskExpiredException();
 
         if(task.getEssays().stream().noneMatch(e->e.getId().equals(essayId)))

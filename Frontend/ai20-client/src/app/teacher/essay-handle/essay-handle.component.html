@@ -1,0 +1,125 @@
+<div class="container">
+<mat-card>
+    <mat-card-title>
+    Essay: {{essay_id}}
+    </mat-card-title>
+ <mat-card-subtitle>
+    Task:{{task_id}} 
+</mat-card-subtitle>
+ <mat-card-content>
+    <span style="color:red;">Storico</span>
+<!--Storico-->
+
+
+     <mat-list>
+
+        <div *ngFor="let essay_storic of storical_essay">
+              
+          <mat-list-item>
+            <mat-icon mat-list-icon style="font-size: 35px;">image</mat-icon>
+            <div mat-line>Nome: {{essay_storic.filename}} </div>
+            <div mat-line>Creato da: {{essay_storic.idCreator}}</div>
+            <div mat-line>Data: {{essay_storic.creationDate}}</div>
+            <div mat-line><a [href]="essay_storic.data" download="{{essay_storic.filename}}">Download</a></div>
+          </mat-list-item>
+        </div>
+    </mat-list>
+</mat-card-content>
+</mat-card>  
+
+
+<!-- Caricamento soluzione dal prof-->
+
+<mat-card>
+    <mat-card-title>      
+        <h1 style="color:red;">Carica correzione</h1>
+    </mat-card-title>
+    <mat-card-subtitle>
+      Carica la correzione dell'elaborato attraverso il form 
+    </mat-card-subtitle>
+    <mat-card-content>
+    <div class="container"><div class="form-group">
+
+             <form [formGroup]="form"  (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+             <div class="form-field">
+               <label class="text-white">Carica soluzione (img)</label><br>
+               <input type="file" id="customFile" formControlName="testo" (change)="selectFile($event)">
+             </div>  
+             <button class="btn btn-primary">Invia</button>
+         <br/></form>
+           
+           </div></div>
+        </mat-card-content>
+        </mat-card>
+           <mat-divider></mat-divider>
+
+           <!--Valutazione finale-->
+           <mat-card>
+               <mat-card-title>
+            <h1 style="color:red;">Dai un voto</h1>
+        </mat-card-title>
+        <mat-card-subtitle>Inserisci un voto per l'elaborato numero {{essay_id}} del task n. {{task_id}}.<br>
+          N.B: Per poter inserire un voto, lo stato dell'elaborato deve essere 'Consegnato'.
+        </mat-card-subtitle>
+        <mat-card-content>
+             <div class="container"><div class="form-group">
+
+                 <form [formGroup]="form_voto_finale"  (ngSubmit)="onSubmit_votofinale()" enctype="multipart/form-data">
+                 <div class="form-field">
+                   <label class="text-white">Valutazione</label><br>
+                   <mat-form-field appearance="fill">
+                    <mat-label>Valutazione</mat-label>
+                    <mat-select formControlName="voto_finale" [disabled]='disableVotoFinale'>
+                        <mat-option value="1">1</mat-option>
+                        <mat-option value="2">2</mat-option>
+                        <mat-option value="3">3</mat-option>
+                        <mat-option value="4">4</mat-option>
+                        <mat-option value="5">5</mat-option>
+                        <mat-option value="6">6</mat-option>
+                        <mat-option value="7">7</mat-option>
+                        <mat-option value="8">8</mat-option>
+                        <mat-option value="9">9</mat-option>
+                        <mat-option value="10">10</mat-option>
+                        <mat-option value="11">11</mat-option>
+                        <mat-option value="12">12</mat-option>
+                        <mat-option value="13">13</mat-option>
+                        <mat-option value="14">14</mat-option>
+                        <mat-option value="15">15</mat-option>
+                        <mat-option value="16">16</mat-option>
+                        <mat-option value="17">17</mat-option>
+                        <mat-option value="18">18</mat-option>
+                        <mat-option value="19">19</mat-option>
+                        <mat-option value="20">20</mat-option>
+                        <mat-option value="21">21</mat-option>
+                        <mat-option value="22">22</mat-option>
+                        <mat-option value="23">23</mat-option>
+                        <mat-option value="24">24</mat-option>
+                        <mat-option value="25">25</mat-option>
+                        <mat-option value="26">26</mat-option>
+                        <mat-option value="27">27</mat-option>
+                        <mat-option value="28">28</mat-option>
+                        <mat-option value="29">29</mat-option>
+                        <mat-option value="30">30</mat-option>
+                        <mat-option value="31">30L</mat-option>
+
+
+
+        
+        
+                    </mat-select>
+                  </mat-form-field>
+                 </div> 
+                 <div class="row container-fluid" *ngIf="show_gia_valutato" >
+                 <div class="form-field">
+                    <mat-form-field>
+                        <input matInput style="font-weight: bold;color:crimson;" formControlName="gia_valutato" >                        
+                        </mat-form-field>        
+                             </div> </div>
+                 <button class="btn btn-primary">Invia</button>
+             <br/></form>
+               
+               </div></div>
+            </mat-card-content>
+            </mat-card>
+
+</div>

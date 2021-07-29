@@ -1,0 +1,29 @@
+
+   <div class="division" *ngFor="let cont of vms_per_team | keyvalue ; index as i">
+
+   <mat-card class="dashboard-card">
+       <mat-card-title>
+        Gruppo: {{cont.key.name}}
+           <button mat-button (click)="openDialogGroup(cont.key)">Configurazione limiti</button>
+       </mat-card-title>
+    <mat-card-subtitle>Virtual machine disponibili per il gruppo {{cont.key.name}}</mat-card-subtitle>
+    <mat-card-content>
+
+
+    <div class="card_vm" *ngFor="let x of toArray(cont.value)">
+      <h2>VM #{{x.id}}</h2>
+        <h3>Stato: {{x.status}}</h3>
+
+
+          <p>Creata da:&nbsp;  {{x.idCreatore}} </p>
+         <p>vcpu:&nbsp;  {{x.vcpu}} </p>
+        <p>GBDisk:&nbsp; {{x.gbdisk}} GB</p>
+        <p>GBRam:&nbsp; {{x.gbram}} GB</p> 
+
+        <button mat-raised-button class="button_spento" *ngIf="x.status==='Spenta'" disabled>VM Spenta</button>
+        <button mat-raised-button class="button_acceso" *ngIf="x.status==='Accesa'" color="primary" title="Avvia" (click)="openVm(x,cont.key)">Collegati</button>
+
+    </div>
+       
+    </mat-card-content>
+</mat-card>  <mat-divider style="margin-bottom:5px;"></mat-divider>    </div>

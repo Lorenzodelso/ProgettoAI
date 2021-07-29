@@ -1,0 +1,31 @@
+<div class="container">
+<mat-divider [vertical]="true"></mat-divider>
+<div id="inner1">
+<div class="division">
+    <mat-card class="example-card" style="text-align: center;">
+        <mat-divider [vertical]="true"></mat-divider>
+        <mat-divider [vertical]="true"></mat-divider>
+        <mat-card-title>
+        Benvenuto nel corso {{this.course_name}}
+        </mat-card-title>
+        <mat-divider></mat-divider>
+        <br>
+    <mat-divider [vertical]="true"></mat-divider>
+    <mat-divider [vertical]="true"></mat-divider>
+    <mat-card-content>
+        <section>
+            <button mat-raised-button class="addvm" color="warn" (click)="clicked_delete()">
+                <mat-icon>delete</mat-icon>&nbsp;Cancella il corso</button> 
+       </section>
+       <br>
+       <section>
+        <button mat-raised-button class="addvm" color="primary" [routerLink]="['/teacher/courses/', this.course_name,'update']">
+            <mat-icon>edit</mat-icon>&nbsp;Modifica il corso</button> 
+        </section>
+    </mat-card-content>
+    </mat-card>      
+</div> 
+
+</div>
+<mat-divider [vertical]="true"></mat-divider>
+</div>

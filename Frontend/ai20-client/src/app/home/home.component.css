@@ -1,0 +1,29 @@
+
+
+  .division{
+    display: flex;  
+  }
+
+  mat-card{
+    float: left;
+  }
+
+  
+  #inner1 {
+    float:left;
+    display: contents;
+ }
+
+
+ .mat-title{
+    color: rgb(79, 79, 94);
+    
+}
+
+.example-card {
+  position: relative;
+    width: 100%;
+    margin: 1%;
+  }
+
+  

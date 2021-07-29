@@ -1,0 +1,103 @@
+
+
+    .mat-toolbar {
+      margin-left: 5px;
+      background: slateblue;
+    }
+
+    .T1 {
+      background: #2b4de2;
+    }
+
+    .T2 {
+      background: #e7e0e0b0;
+
+    }
+
+
+    mat-icon {
+      margin-right: 4px;
+      cursor: pointer;
+      
+    }
+    mat-icon:hover{
+      background: #4f69dd;
+    ;
+    }
+
+    mat-nav-list{
+      width: 100%
+    }
+
+    mat-sidenav {
+     /* min-width: 10% ;
+      max-width: max-content; */
+      width: 15%;
+      /* border-right-color: #3d5ef1;  */
+      
+    }
+
+
+    mat-sidenav-content {
+      background: #e7e0e0b0;
+      /* scrivo qui dimensione content */
+        }
+    
+
+    .example-fill-remaining-space {
+      /* This fills the remaining space, by using flexbox. 
+         Every toolbar row uses a flexbox row layout. */
+      /* flex: 1 1 auto; */
+      width: 75%
+    }
+
+    .example-label {
+      font-size: 14px;
+      margin-left: 8px;
+      width: 120px;
+    }
+
+    .mat-button.LogButton {
+      color: whitesmoke;
+    }
+    
+    .mat-button.LogButton:hover {
+      background-color: #11257c;
+    }
+	.create_course {
+      color:blue;
+      font-weight: bold;
+    }			
+    /*
+    .mat-stroked-button.mat-success {
+    color: #155724;
+    }
+    */
+
+  .profile_img {
+    padding: 6px;
+    border-radius: 10%;
+  }
+
+  mat-divider {
+    margin: 2px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .nav-title{
+    text-decoration: none;
+    color: black;
+  }
+
+  .nav-username{
+    font-weight: bolder;
+  }
+
+  .container{
+    padding: 6px;
+  }
+
+  mat-card{
+    margin-bottom: 6px;
+  }

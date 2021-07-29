@@ -1,0 +1,245 @@
+<div class="container" *ngIf="inAteamObs | async ; else elseBlock">
+  <mat-card>
+      <!-- <span class="mat-title"><mat-icon>label_important</mat-icon>Il mio Gruppo:</span> -->
+      <mat-card-title>Membri del gruppo {{team_name}}</mat-card-title>
+      <table mat-table #table [dataSource]="group" matSort > 
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-icon mat-list-icon>perm_identity</mat-icon>
+          </td>      
+        </ng-container>
+  
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef > Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef > FirstName </th>
+          <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+        </ng-container>
+         
+        <tr mat-header-row *matHeaderRowDef="groupColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: groupColumns;"></tr>       
+      </table>
+    </mat-card>
+    </div>
+  
+
+
+
+  <ng-template #elseBlock>    
+
+
+    <div class="container" >
+      <span class="mat-title"><mat-icon>chevron_right</mat-icon>Componi il tuo gruppo</span>
+      
+          <form class="addgroupform" autocomplete="off" [formGroup]="form">
+            <section>
+      
+              <mat-form-field class="example-full-width" appearance="fill">
+                  <mat-label>Me:</mat-label>
+                  <input matInput placeholder="Ex. Mario Rossi" value={{studentID}} disabled>
+              </mat-form-field>
+      
+              <mat-form-field appearance="fill">
+                  <mat-label>Nome gruppo</mat-label>
+                  <input matInput type="text" formControlName="newGroupName" placeholder="Ex. 'il mio gruppo'"  min="1">
+              </mat-form-field>
+              
+              <mat-form-field appearance="fill">
+                  <mat-label>Timeout richiesta</mat-label>
+                  <input matInput type="number" formControlName="timeoutRequest" placeholder="Ex. 24"  min="1">
+                  <span matSuffix>hours</span>
+              </mat-form-field>
+      
+            </section>
+          
+          </form>
+      
+           <br>
+          
+          
+      
+          <table mat-table #table [dataSource]="freeStudents" matSort > 
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                              [checked]="selection.hasValue() && isAllSelected()"
+                              [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? selection.toggle(row) : null"
+                              [checked]="selection.isSelected(row)">
+                  
+                </mat-checkbox>
+              </td>      
+            </ng-container>
+      
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> Id </th>
+              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+           
+            <ng-container matColumnDef="serial">
+              <th mat-header-cell *matHeaderCellDef> Serial </th>
+              <td mat-cell *matCellDef="let element"> {{element.serial}} </td>
+            </ng-container>
+      
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef > Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+      
+            <ng-container matColumnDef="firstName">
+              <th mat-header-cell *matHeaderCellDef > FirstName </th>
+              <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+            </ng-container>
+             
+            <tr mat-header-row *matHeaderRowDef="studentColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: studentColumns;"
+            (click)="selection.toggle(row)"  ></tr>       
+          </table>
+      
+          <br>
+          <button class="sendRequest" mat-stroked-button (click)="sendTeamRequest()" >Invia richiesta gruppo</button>
+        
+      
+      
+          <br>
+          <br>
+          <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
+          <mat-divider></mat-divider>
+          <br>
+          
+      
+        
+      
+      <!-- LISTA RICHIESTE GRUPPO -->
+      <span class="mat-title"><mat-icon>chevron_right</mat-icon>Richieste di partecipazione a gruppi</span>
+       <br>
+       <br>     
+       <mat-accordion>
+
+        
+      <div *ngFor="let tok of tokenMap | keyvalue; index as i">
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <section>
+                <mat-icon>group</mat-icon> ID gruppo: {{tok.key.teamId}}  
+                <mat-divider [vertical]="true"></mat-divider>   
+                 Scadenza invito: {{tok.key.expiryDate}}
+              </section>
+            </mat-panel-title>
+            
+
+            
+            <mat-panel-description>   
+              Maggiori informazioni:
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let stud of toArray(tok.value)">
+            <p><mat-icon>person_outline</mat-icon>
+              ID: {{stud.id}} 
+              <mat-divider [vertical]="true"></mat-divider>
+            Nome: {{stud.firstName}}
+             <mat-divider [vertical]="true"></mat-divider>
+            Cognome: {{stud.name}}
+            <mat-divider [vertical]="true"></mat-divider>
+            Stato richiesta: {{stud.stato}}</p>
+          </div>
+
+
+          <mat-action-row>
+            <button mat-raised-button *ngIf="!tok.key.confirmation" class="success" (click)="accept(tok.key.id,tok.key.teamId)" >Accetta</button>
+            <button mat-raised-button *ngIf="!tok.key.confirmation" class="reject" (click)="reject(tok.key.id,tok.key.teamId)">Rifiuta</button>      
+            <p *ngIf="tok.key.confirmation">Hai gia accettato questa richiesta</p>
+          </mat-action-row>
+        </mat-expansion-panel>  
+      
+        <mat-divider></mat-divider>
+      </div>
+
+
+
+
+
+        
+      </mat-accordion>
+      <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
+
+       <!-- LISTA GRUPPI CREATI DA ME ED IN ATTESA DI RISPOSTA -->
+       <span class="mat-title"><mat-icon>chevron_right</mat-icon>Richieste di gruppi create da te</span>
+       <br>
+       <br>     
+       <mat-accordion>
+
+        
+      <div *ngFor="let team of myRequestMap | keyvalue; index as i">
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <section>
+                <mat-icon>group</mat-icon> Nome gruppo: {{team.key}}  
+                <mat-divider [vertical]="true"></mat-divider>   
+              </section>
+            </mat-panel-title>
+            
+
+            
+            <mat-panel-description>   
+              Maggiori informazioni:
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let stud of toArray(team.value)">
+            <p><mat-icon>person_outline</mat-icon>
+              ID: {{stud.id}} 
+              <mat-divider [vertical]="true"></mat-divider>
+            Nome: {{stud.firstName}}
+             <mat-divider [vertical]="true"></mat-divider>
+            Cognome: {{stud.name}}
+            <mat-divider [vertical]="true"></mat-divider>
+            Stato richiesta: {{stud.stato}}</p>
+          </div>
+
+          <!-- <mat-datepicker></mat-datepicker> -->
+
+          <mat-action-row>
+                    <p>In attesa di risposta...</p>
+          </mat-action-row>
+        </mat-expansion-panel>  
+      
+        <mat-divider></mat-divider>
+      </div>
+
+
+
+
+
+        
+      </mat-accordion>
+      
+      
+      
+      </div>
+
+
+
+  </ng-template>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+          

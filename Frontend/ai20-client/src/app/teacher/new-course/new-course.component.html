@@ -1,0 +1,68 @@
+ <div class="container"><div class="form-group">
+<mat-card>
+  <mat-card-title>Creazione nuovo corso</mat-card-title>
+  <mat-card-subtitle>Inserisci le informazioni nel form ed il relativo modello di Virtual Machine</mat-card-subtitle>
+  <br>
+  <mat-card-content>
+  <form (ngSubmit)="onSubmit()">
+    <section>
+      
+          
+      <mat-form-field appearance="fill">
+          <mat-label>Nome corso</mat-label>
+          <input matInput placeholder="Ex. Analisi I" [(ngModel)]="model.name" name="name">
+          <span matSuffix></span>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Numero minimo componenti gruppo</mat-label>
+        <input matInput type="number" placeholder="Ex. 1" [(ngModel)]="model.min" name="min">
+        <span matSuffix></span>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Numero massimo componenti gruppo</mat-label>
+      <input matInput type="number" placeholder="Ex. 10" [(ngModel)]="model.max" name="max">
+      <span matSuffix></span>
+  </mat-form-field>
+  <br>
+
+
+  <mat-form-field appearance="fill">
+    <mat-label>Modello Virtual Machine CPU</mat-label>
+    <input matInput type="number"  placeholder="Ex. 1"  [(ngModel)]="model.modelVM_cpu" name="cpu">
+    <span matSuffix></span>
+</mat-form-field>
+<br>
+
+<mat-form-field appearance="fill">
+  <mat-label>Modello Virtual Machine GB Disk</mat-label>
+  <input matInput type="number" placeholder="Ex. 100"  [(ngModel)]="model.modelVM_GBDisk" name="gbdisk">
+  <span matSuffix></span>
+</mat-form-field>
+<br>
+
+<mat-form-field appearance="fill">
+  <mat-label>Modello Virtual Machine GB Ram</mat-label>
+  <input matInput type="number"  placeholder="Ex. 2"  [(ngModel)]="model.modelVM_GBRam" name="gbram">
+  <span matSuffix></span>
+</mat-form-field>
+<br>
+
+<div style="text-align: center;">
+<h2 style="font-weight:bold;text-align:center">Abilita corso:</h2>
+<mat-checkbox class="mat-checkbox-enabled" [(ngModel)]="model.enabled" name="enabled"></mat-checkbox>
+</div>
+      <br>
+
+
+        <h2 style="font-weight:bold;text-align:center">Seleziona altri docenti:</h2>
+        <br>
+      <app-teacher-cont (addEmitter_professors)="scelta_professori($event)" [all_prof]="all_prof" ></app-teacher-cont>
+       <br>            
+      <br>    
+  </section>
+</form>
+</mat-card-content></mat-card></div></div>

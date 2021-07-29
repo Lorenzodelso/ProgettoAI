@@ -1,0 +1,125 @@
+table {
+    width: 100%;
+  }
+
+  .mat-column-select {
+    overflow: initial;
+  }
+  
+
+
+    .createVm {
+      margin-top: 8px;
+      margin-left: 12px;
+      min-width: 150px;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .groupform-width {
+      width: 100%;
+    }
+
+    table {
+      background: rgb(255, 255, 255);
+      
+    } 
+
+    .addButton {
+      position: absolute;
+      margin-left: 10px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .deleteButton {
+      margin-bottom: 1%;
+      cursor: pointer;
+    }
+    
+
+    .button-row button{
+      margin-top: 8px;
+      font-size: 16px;
+      margin-left: 12px;     
+      }
+
+
+    mat-form-field {
+        margin-right: 14px;
+     }
+
+    .mat-title{
+      font-size: large;
+    }
+    
+button{
+ 
+  margin-right: 8px;
+}
+
+
+mat-form-field {
+  margin-right: 1%;
+  width: fit-content;
+  min-width: 50px;
+  max-width: 150px;
+}
+
+.addvmform {
+  margin-top: 8px;
+  margin-left: 12px;
+  width: 100%;
+  
+}
+
+
+
+/*card style*/
+
+.example-card {
+  width: 14%;
+  min-width: 200px;
+  margin: 0.5%;
+
+}
+
+.division{
+  display: block;
+}
+
+mat-card.example-card{
+  float: left;
+}
+
+mat-card-image{
+  object-fit: cover; /*this makes the image in src fit to the size specified below*/
+  
+}
+
+
+.action{
+  margin: 3%;
+  text-align: center;
+}
+
+p{
+  text-align: center;
+}
+
+.addvm{
+  margin: 5px;
+  /* position: relative;
+  left: 50%;
+  transform: translate(-50%,0px); */
+}
+
+.stats{
+  width: 1%;
+  height: 1%;
+  display: contents;
+}
+
+.container{
+  padding: 6px;
+}

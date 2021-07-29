@@ -1,0 +1,108 @@
+ <div id="wrapper" class="container">
+  <mat-card>
+
+    <div id="inner1">  <span class="mat-title"><mat-icon>chevron_right</mat-icon>Tasks (consegne del docente)</span>
+    <h4>(Clicca su una consegna per visualizzare i tuoi elaborati)</h4> 
+      <div class="division">
+        <mat-card (click)="clickedTask(cont.id)" class="example-card" *ngFor="let cont of tasks">
+            <mat-card-title>
+            Task: {{cont.id}}  
+            </mat-card-title>
+            <mat-divider></mat-divider>
+            <br>
+          <mat-card-subtitle>
+            Corso: {{coursename}}
+            <br>
+            <span>&#10230;</span> Data rilascio: {{cont.dataRilascio}}
+            <br>
+            <span>&#10230;</span> Data scadenza: {{cont.dataScadenza}}
+            <br>
+            <span>&#10230;</span> <a [href]="cont.description" download="consegna_{{cont.id}}.png">Download</a>
+          </mat-card-subtitle>
+          <mat-card-content>
+          </mat-card-content>
+        </mat-card>      
+      </div> 
+
+    </div>
+
+
+
+    <div id="inner2">
+    
+    <!-- <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider> -->
+    </div>
+
+
+    <div id="inner2" *ngIf="taskId!==0">
+      <section>
+          <span class="mat-title"><mat-icon>chevron_right</mat-icon>Elaborato per task #{{taskId}} </span>
+      </section>
+
+      
+
+      <aside style="width: fit-content;border: ridge;border-color: dimgrey;">
+      <form [formGroup]="form" (ngSubmit)="addEssay()" enctype="multipart/form-data" style="margin: 0.5%;">
+      <div class="form-field" *ngIf="essay">
+        <label class="text-white">Carica elaborato (jpg,png,...)</label><br>
+        <input type="file" id="customFile" formControlName="testo" (change)="selectFile($event)">
+        <div >
+         <button mat-raised-button class="addButton" mat-button >Aggiungi</button>
+        </div>
+      </div>
+      </form>
+      </aside>
+
+
+    <br>
+    <br>
+    
+    <mat-list>
+      <mat-list-item>
+        <mat-icon mat-list-icon style="font-size: 35px;">note</mat-icon>
+        <div mat-line *ngIf="essay">Elaborato Id: {{essay.id}}</div>
+<!--         <div mat-line *ngIf="essay.stato==='Terminato'; else elseline">Stato: {{essay.stato}}  Voto: {{essay.voto}}</div>       
+        <ng-template #elseline>--> 
+          <div *ngIf="essay" mat-line>Stato: {{essay.stato}} <p *ngIf="essay.stato==='Terminato'">Voto: {{essay.voto}}</p></div>
+        <div mat-line *ngIf="essay"> Ultima modifica: {{essay.lastModified}} </div>
+        <div mat-line>
+          <button mat-stroked-button (click)="showStorical()" class="storical" color="warn">&nbsp;Vedi storico</button> 
+        </div>
+      </mat-list-item>
+    </mat-list>
+
+    <br>
+    <br>
+
+    <div *ngIf="hasStorical">
+      <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
+
+      <mat-list>
+        <div mat-subheader>Versioni sottomesse</div>
+        <mat-list-item *ngFor="let img of essayImages">
+          <mat-icon mat-list-icon style="font-size: 35px;">image</mat-icon>
+          <div mat-line>Nome: {{img.filename}} </div>
+          <div mat-line>Creato da: {{img.idCreator}}</div>
+          <div mat-line>Data: {{img.creationDate}}</div>
+          <div mat-line><a [href]="img.data" download="{{img.filename}}.png">Download</a></div>
+        </mat-list-item>
+      </mat-list>
+
+      <br><br>
+      <br><br>
+      <br><br>
+      
+
+    </div>
+
+
+
+    </div>
+  </mat-card>
+</div>

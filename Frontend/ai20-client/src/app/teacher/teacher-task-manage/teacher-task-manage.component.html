@@ -1,0 +1,27 @@
+<!--Manage Task: Card di un task contenente la lista degli elaborati degli studenti ( app essay cont )-->
+    <div *ngIf="my_task" class="container">
+    <mat-card>
+        <mat-card-title>
+         Task: {{my_task.id}}
+         <!--<img [src]="cont.key.description">-->
+         <a class="text_download" [href]="my_task.description" download="consegna.png"><span class="material-icons">
+          get_app
+          </span> Download testo</a>
+        </mat-card-title>
+     <mat-card-subtitle>
+Data rilascio: {{my_task.dataRilascio}}  -  
+Data scadenza: {{my_task.dataScadenza}}
+    </mat-card-subtitle>
+     <mat-card-content>
+        <span style="color:red;">Lista elaborati studenti</span>
+<!--LISTA ELABORATI STUDENTI IN MAT TABLE-->
+        <app-essay-cont  [course_name]="course_name" [task_id]="my_task.id" [essay_per_task]="essays" ></app-essay-cont>
+
+
+     </mat-card-content>
+ </mat-card>  
+
+
+
+<mat-divider></mat-divider>
+</div>

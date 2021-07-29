@@ -1,0 +1,10 @@
+<p mat-dialog-title><mat-icon>edit</mat-icon>&nbsp;Modifica VM</p>
+
+<mat-dialog-content class="mat-login">
+    <section>
+    <p>Seleziona i nuovi owners della vm. Essi potranno modificare, eliminare e far partire la Vm.</p>
+
+    <app-members-cont [enrolledStudents]="members"  [students]="members" (addEmitter)="edit_Owners($event)"></app-members-cont>
+  
+    </section>
+</mat-dialog-content>

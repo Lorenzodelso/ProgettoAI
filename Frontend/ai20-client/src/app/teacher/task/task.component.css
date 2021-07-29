@@ -1,0 +1,21 @@
+.bottoni_task {
+    margin:10px;
+    margin-bottom: 10px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0px);
+}
+
+.text_download {
+    color:red;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.container{
+    padding: 6px;
+  }
+
+  mat-card{
+    margin-bottom: 6px;
+  }

@@ -1,0 +1,21 @@
+   <a  *ngIf="course_name" routerLink="/teacher/courses/{{course_name}}/riepilogo-teacher"
+    mat-tab-link label="riepilogo"> 
+        Riepilogo
+    </a>
+    
+    <a  *ngIf="course_name" routerLink="/teacher/courses/{{course_name}}/enrolled"
+    mat-tab-link label="students"> 
+        Studenti
+    </a>
+    <a  *ngIf="course_name" routerLink="/teacher/courses/{{course_name}}/task"
+    mat-tab-link label="consegne"> 
+      Consegne ed elaborati
+    </a>
+  
+    <a  *ngIf="course_name" routerLink="/teacher/courses/{{course_name}}/vms"
+    mat-tab-link label="vms"> 
+        VMs
+    </a>
+
+
+

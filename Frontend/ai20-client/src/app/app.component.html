@@ -1,0 +1,102 @@
+<mat-toolbar class="T1"><mat-icon (click)=toggleForMenuClick()>menu</mat-icon>  
+  <a class="nav-title" routerLink="/home" routerLinkActive="active">VIRTUAL LABS</a>
+  <span class="example-fill-remaining-space"></span>
+  
+  <div class="example-label">
+    <button *ngIf="!authService.loggedin" class="LogButton" mat-button routerLink="/home" routerLinkActive="active" [queryParams]="{doLogin: true}"> Login</button>
+    <button *ngIf="!authService.loggedin" class="LogButton" mat-button routerLink="/home" routerLinkActive="active" [queryParams]="{doRegistration: true}"> Registration</button>
+
+    <button *ngIf="authService.loggedin" class="LogButton" mat-button (click)="logout()"> Logout </button>
+    <button (click)="clicked_course('profile')" *ngIf="authService.loggedin" class="LogButton" mat-button routerLink="/{{this.id}}/profile"> Profilo </button>
+  </div>
+
+
+</mat-toolbar>
+<!---
+<mat-toolbar class="T2">
+  <div *ngIf="course_name; else else_home">{{course_name}}</div>
+  <ng-template #else_home >Benvenuto nel portale!</ng-template>
+  <div *ngIf="authService.isProfessor()">&nbsp;&nbsp; (Professore: {{authService.getUserId()}})</div>
+  <div *ngIf="authService.isStudent()">&nbsp;&nbsp; (Studente: {{authService.getUserId()}} )</div>
+</mat-toolbar>
+-->
+<mat-sidenav-container>
+
+    <!-- SIDENAV -->
+  <mat-sidenav #sidenav mode="side" closed position="start">
+    
+    <div class="container-small"> 
+      <mat-nav-list *ngIf="authService.loggedin">
+        
+        <!--IMG INFO USER-->
+        <div style="text-align: center;" class="photo_and_user">
+          <div><img class="profile_img" style="width: 150px;" [src]="this.photo"></div>
+          <div class="nav-username">{{this.username}}</div>
+          <div>{{this.id}}</div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <ng-container *ngIf="course_list">
+          
+        <!--LISTA CORSI PROFESSORE-->
+          <section *ngIf="authService.isProfessor()">
+			<!--New course-->
+            <a class="create_course" (click)="clicked_course('new_course')" mat-list-item routerLink="/teacher/courses/new_course"> 
+              <span class="material-icons">
+              control_point
+              </span>
+              Crea un nuovo corso</a>
+              <!--Corsi del prof-->
+              <div mat-subheader>I tuoi corsi</div>
+          <mat-list-item *ngFor="let course of courses" (click)="clicked_course(course.name)" [routerLink]="['/teacher/courses/', course.name,'riepilogo-teacher']"> 
+            <span >
+             {{ course.name }} 
+            </span>
+          </mat-list-item>
+
+        </section>
+        <!--LISTA CORSI STUDENTE-->
+        <section *ngIf="authService.isStudent()">
+		  <!--Corsi studente-->
+          <div mat-subheader>I tuoi corsi</div>					   
+          <mat-list-item *ngFor="let course of courses" (click)="clicked_course(course.name)" [routerLink]="['/student/courses/', course.name,'riepilogo-student']"> 
+            <span>
+             {{ course.name }} 
+            </span>
+          </mat-list-item>
+        </section>
+
+        </ng-container>
+
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  
+
+
+  <!-- CONTENT -->
+  <mat-sidenav-content>
+
+    
+    <nav mat-tab-nav-bar >
+        <!--Teacher menu-->
+      <div *ngIf="!tab_type; else else_tabs">
+        <div *ngIf="menuAvailable | async">
+          <app-menu-teacher [course_name]="course_name" name="menu-teacher"></app-menu-teacher> 
+        </div>
+      </div>
+      <!--Student menu-->
+      <ng-template #else_tabs>
+        <div *ngIf="menuAvailable | async">
+          <app-menu-student [course_name]="course_name" name="menu-student"></app-menu-student> 
+        </div>
+      </ng-template>
+    </nav>
+   
+    <router-outlet> </router-outlet>
+    
+  </mat-sidenav-content>
+ 
+
+</mat-sidenav-container>

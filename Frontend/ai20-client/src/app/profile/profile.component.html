@@ -1,0 +1,54 @@
+<div class="container">
+ <span *ngIf="this.isProfessor"> 
+<mat-card class="card_profilo">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+       <mat-card-title>{{this.info_teacher.name}} {{this.info_teacher.firstName}} - {{this.info_teacher.id}}</mat-card-title> 
+      <mat-card-subtitle>Ruolo: Professore</mat-card-subtitle>
+
+    </mat-card-header>
+    <div class="img_profilo_card">
+        <div *ngIf="this.checkPhoto_prof()">
+            <img style="width: 150px;" src="/assets/standard_img.png" alt="image">
+        </div>
+
+    <img  mat-card-image style="width: 150px;"[src]="this.info_teacher.photoDocente">
+    </div>
+    <mat-card-content>
+        <div><form [formGroup]="form"  (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <h1>Aggiorna immagine profilo</h1>
+            <div class="form-field">
+            <input type="file" id="customFile" formControlName="immagine_profilo" (change)="selectFile($event)">
+            </div>  
+            <button mat-button>Carica immagine</button>
+        <br/></form></div>
+    </mat-card-content>
+  </mat-card></span>
+
+<!---->
+<span *ngIf="this.isStudent"> 
+
+<mat-card class="card_profilo">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+       <mat-card-title>{{this.info_student.name}} {{this.info_student.firstName}} - {{this.info_student.id}}</mat-card-title> 
+      <mat-card-subtitle>Ruolo: Studente</mat-card-subtitle>
+
+    </mat-card-header>
+    <div class="img_profilo_card">
+        <div *ngIf="this.checkPhoto_student()">
+            <img style="width: 150px;" src="/assets/standard_img.png" alt="image">
+        </div>
+    <img  mat-card-image style="width: 150px;"[src]="this.info_student.photoStudent">
+    </div>
+    <mat-card-content>
+        <div><form [formGroup]="form"  (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <h1>Aggiorna immagine profilo</h1>
+            <div class="form-field">
+            <input type="file" id="customFile" formControlName="immagine_profilo" (change)="selectFile($event)">
+            </div>  
+            <button mat-button>Carica immagine</button>
+        <br/></form></div>
+    </mat-card-content>
+  </mat-card></span>
+</div>

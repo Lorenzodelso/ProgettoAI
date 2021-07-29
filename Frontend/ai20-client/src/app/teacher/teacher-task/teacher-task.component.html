@@ -1,0 +1,55 @@
+<!-- Mat table contente la lista degli elaborati-->
+<div class="container">
+
+    <table mat-table #table [dataSource]="dataSource" matSort > 
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- dataRilascio Column -->
+      <ng-container matColumnDef="dataRilascio">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Rilascio </th>
+        <td mat-cell *matCellDef="let element"> {{element.dataRilascio}} </td>
+      </ng-container>
+
+
+      <!-- dataScadenza Column -->
+      <ng-container matColumnDef="dataScadenza">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Data Scadenza </th>
+        <td mat-cell *matCellDef="let element"> {{element.dataScadenza}} </td>
+      </ng-container>
+
+ 
+
+      <!-- testo Column -->
+      <ng-container matColumnDef="testo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Testo </th>
+        <td mat-cell *matCellDef="let element">
+          <a class="text_download" [href]="element.description" download="consegna.png"><span class="material-icons">
+            get_app
+            </span> Download testo</a>
+        </td>
+      </ng-container>
+
+            <!-- testo Column -->
+      <ng-container matColumnDef="manage">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Gestisci </th>
+        <td mat-cell *matCellDef="let element">
+            <!-- <button (click)="getEssayStorical(x.id,cont.key.id);">Gestisci</button> -->
+            <a routerLink="/teacher/courses/{{course_name}}/task/{{element.id}}">Gestisci</a>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row  *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row  *matRowDef="let row; columns: columnsToDisplay;"
+      routerLink="/teacher/courses/{{course_name}}/task/{{row.id}}"></tr>
+    </table>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        
+    <section>
+      </section>
+</div>

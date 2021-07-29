@@ -1,0 +1,39 @@
+ <!-- <div class="container">
+   <mat-card>
+    <mat-card-title>Crea nuova consegna</mat-card-title>
+      <form [formGroup]="form"  (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+      <mat-form-field appearance="fill">
+        <mat-label>Carica testo (img)</mat-label><br>
+        <input type="file" id="customFile" formControlName="testo" (change)="selectFile($event)">
+      </mat-form-field>  
+      <mat-form-field appearance="fill">
+        <mat-label>Numero giorni scadenza</mat-label><br>
+        <input matInput type="number" formControlName="giorniScadenza" class="form-control">
+      </mat-form-field>  
+      <button class="btn btn-primary">Carica consegna</button>
+        <br/></form>
+    </mat-card>
+  </div>  -->
+
+  <div class="container">
+    <mat-card>
+      <mat-card-title>Nuova consegna</mat-card-title>
+      <mat-card-subtitle>Carica un file e seleziona il numero di giorni per la scadenza</mat-card-subtitle>
+      <mat-card-content>
+        <form [formGroup]="form"  (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        <mat-form-field appearance="fill">
+          <mat-label>Numero giorni scadenza</mat-label>
+          <input matInput type="number" formControlName="giorniScadenza">
+        </mat-form-field>
+        <br>
+        <div class="form-field">
+          <mat-label style="font-weight: bold; margin-top: 5px;">Carica immagine testo</mat-label><br>
+          <input type="file" id="customFile" formControlName="testo" (change)="selectFile($event)">
+        </div>
+        <br>
+          <button mat-raised-button color="primary">Carica consegna</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  

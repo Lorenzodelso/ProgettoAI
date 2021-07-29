@@ -1,0 +1,48 @@
+<div class="container">
+<!--Bottone per: crea nuovo task -->
+<!--Card contentente la lista delle consegne, nella mat-table ( in app-teacher-task )-->
+       <mat-card>
+        <mat-card-title>
+         Lista delle consegne
+        </mat-card-title>
+     <mat-card-subtitle>
+Puoi ordinare le consegne per data di scadenza o per data di rilascio. Per vedere gli elaborati degli studenti clicca sulla consegna associata.
+    </mat-card-subtitle>
+     <mat-card-content>
+        <app-teacher-task [course_name]="course_name"  [tasks]="tasks"></app-teacher-task>
+        <br>
+        <button class="bottoni_task" [routerLink]="['/teacher/courses/', course_name,'new_task']" mat-raised-button color="primary">+ Crea nuova consegna</button>
+
+     </mat-card-content>
+ </mat-card>  
+</div>
+
+
+<!--Old Version-->
+<!--ELENCO TASK 
+<div *ngFor="let cont of essay_per_task | keyvalue ; index as i">
+    <mat-card>
+        <mat-card-title>
+         Task: {{cont.key.id}}
+         <a class="text_download" [href]="cont.key.description" download="consegna.png"><span class="material-icons">
+          get_app
+          </span> Download testo</a>
+        </mat-card-title>
+     <mat-card-subtitle>
+Data rilascio: {{cont.key.dataRilascio}}  -  
+Data scadenza: {{cont.key.dataScadenza}}
+    </mat-card-subtitle>
+     <mat-card-content>
+        <span style="color:red;">Lista elaborati studenti</span>
+
+        <app-essay-cont  [course_name]="course_name" [task_id]="cont.key.id" [essay_per_task]="cont.value" ></app-essay-cont>
+
+
+     </mat-card-content>
+ </mat-card>  
+
+
+
+<mat-divider></mat-divider>
+</div>
+ -->

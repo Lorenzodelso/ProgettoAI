@@ -1,0 +1,19 @@
+<a *ngIf="course_name" [routerLink]="['student/courses/', course_name ,'riepilogo-student']"
+          mat-tab-link label="Riepilogo"> 
+            Riepilogo
+          </a>
+
+          <a *ngIf="course_name"  [routerLink]="['student/courses/', course_name ,'groups']"
+          mat-tab-link label="Gruppi">    <!--(click)="groupClicked(course_name,)"  -->
+            Gruppi
+          </a>
+
+          <a *ngIf="course_name" [routerLink]="['student/courses/', course_name ,'vms']"
+          mat-tab-link label="vms"> 
+              VMs
+          </a>
+
+          <a *ngIf="course_name" [routerLink]="['student/courses/', course_name ,'tasks']"
+          mat-tab-link label="tasks"> 
+              Consegne ed elaborati
+          </a>

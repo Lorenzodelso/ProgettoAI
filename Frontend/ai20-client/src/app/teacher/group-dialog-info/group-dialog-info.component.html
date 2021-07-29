@@ -1,0 +1,73 @@
+
+  <h1 mat-dialog-title><mat-icon>edit</mat-icon>&nbsp;Configurazione limiti utilizzo risorse</h1>
+  <h2>Team: {{data.team_selected.name}} </h2>
+<mat-dialog-content class="mat-login">
+    <form [formGroup]="form">
+    <section>
+      
+          
+      <mat-form-field appearance="fill">
+          <mat-label>GB Ram totali</mat-label>
+          <input matInput type="number" formControlName="gbramtotali" placeholder="Ex. 1"  min="1">
+          <span matSuffix></span>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Numero massimo VM accese </mat-label>
+        <input matInput type="number" formControlName="maxvmaccese" placeholder="Ex. 2"  min="0">
+        <span matSuffix>VM</span>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field appearance="fill">
+        <mat-label>GB Disk totali</mat-label>
+        <input matInput type="number" formControlName="gbdisktotali" placeholder="Ex. 2"  min="0">
+        <span matSuffix>GB</span>
+      </mat-form-field>
+      <br>
+<!--disabled, info-->
+<h2>Specchietto riassuntivo</h2>
+
+<mat-form-field appearance="fill">
+  <mat-label>Stato team</mat-label>
+  <input matInput type="text" formControlName="status" readonly >
+</mat-form-field>
+<br>
+      <mat-form-field  appearance="fill">
+        <mat-label>GB Disk usati</mat-label>
+        <input matInput type="number" formControlName="gbdiskusati"  readonly>
+        <span matSuffix>GB</span>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field  appearance="fill">
+        <mat-label>Vm Accese</mat-label>
+        <input matInput type="number" formControlName="vmaccese"  readonly>
+        <span matSuffix>VM</span>
+      </mat-form-field>
+      <br>
+
+      <mat-form-field appearance="fill">
+        <mat-label>VCPU Usate</mat-label>
+        <input matInput type="number" formControlName="vcpuusate" readonly>
+        <span matSuffix>VCPU</span>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>VCPU totali</mat-label>
+        <input matInput type="number" formControlName="vcputotali" readonly >
+        <span matSuffix>VCPU</span>
+      </mat-form-field>
+
+    </section>
+  </form>
+
+  </mat-dialog-content>
+
+      <mat-dialog-actions align="end">
+        <button mat-raised-button color="primary" (click)="onSubmit()">Conferma</button>
+        <button mat-raised-button style="margin-left: 20px;" color="warn" mat-dialog-close>Annulla</button> 
+      </mat-dialog-actions>
+
+

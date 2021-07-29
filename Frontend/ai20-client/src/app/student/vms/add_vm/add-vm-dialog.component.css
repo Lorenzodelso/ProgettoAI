@@ -1,0 +1,10 @@
+mat-dialog-content{
+    text-align: center;
+}
+
+mat-form-field {
+    margin-right: 1%;
+    width: fit-content;
+    min-width: 50px;
+    max-width: 150px;
+  }

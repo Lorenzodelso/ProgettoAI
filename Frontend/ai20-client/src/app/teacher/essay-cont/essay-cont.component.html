@@ -1,0 +1,96 @@
+<div class="container">
+
+    <form [formGroup]="filterForm">
+        <mat-form-field appearance="fill">
+            <mat-label>Filtra per stato</mat-label>
+            <mat-select  formControlName="filtering_state" >
+                <mat-option value="Non ancora letto">Non ancora letto</mat-option>
+              <mat-option value="Letto">Letto</mat-option>
+              <mat-option value="Consegnato">Consegnato</mat-option>
+              <mat-option value="Rivisto">Rivisto</mat-option>
+              <mat-option value="Terminato">Terminato</mat-option>
+              <mat-option value="all">Tutti</mat-option>
+
+
+            </mat-select>
+          </mat-form-field>
+       <button mat-button color="primary" class="primary" (click)="applyFilter()">Submit</button>
+    </form>
+
+
+    <table mat-table #table [dataSource]="dataSource" matSort > 
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+            <!-- Student ID Column -->
+            <ng-container matColumnDef="id_studente">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Id Studente </th>
+              <td mat-cell *matCellDef="let element"> {{element.idStudente}} </td>
+            </ng-container>
+
+            <!-- name,surname of student Column -->
+            <ng-container matColumnDef="nome_studente">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome Studente </th>
+              <td mat-cell *matCellDef="let element"> {{element.nome_studente}} </td>
+            </ng-container>
+
+      <!-- stato Column -->
+      <ng-container matColumnDef="stato">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Stato </th>
+        <td mat-cell *matCellDef="let element"> {{element.stato}} </td>
+      </ng-container>
+
+            <!-- timeStamp stato Column -->
+            <ng-container matColumnDef="timestamp">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Ultimo timestamp </th>
+              <td mat-cell *matCellDef="let element"> {{element.lastModified}} </td>
+            </ng-container> 
+
+      <!-- voto Column -->
+      <ng-container matColumnDef="voto">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Voto </th>
+        <td style="color:brown;font-weight: bold;" mat-cell *matCellDef="let element"> 
+            <ng-container *ngIf="element.voto==31;else elseif1">30L</ng-container>
+            <ng-template #elseif1>
+                <ng-container *ngIf="element.voto>0; else elseif2">{{element.voto}}</ng-container>
+            </ng-template>
+
+            <ng-template #elseif2>
+                <ng-container >Non ancora valutato</ng-container>
+          </ng-template>
+
+
+
+     </td>
+      </ng-container>
+
+
+
+
+      <!-- load storico Column -->
+      <ng-container matColumnDef="storico">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+        <td mat-cell *matCellDef="let row">
+            <!-- <button (click)="getEssayStorical(x.id,cont.key.id);">Gestisci</button> -->
+            <a routerLink="/teacher/courses/{{course_name}}/task/{{task_id}}//essay/{{row.id}}/manage_essay">Gestisci</a>
+        
+        
+        </td>
+      </ng-container>
+
+
+
+
+      
+      <tr mat-header-row  *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row  *matRowDef="let row; columns: columnsToDisplay;"
+      routerLink="/teacher/courses/{{course_name}}/task/{{task_id}}//essay/{{row.id}}/manage_essay"></tr>
+
+    </table>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        
+</div>

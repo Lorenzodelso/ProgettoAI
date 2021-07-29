@@ -1,0 +1,9 @@
+<mat-card>
+  <mat-card-title>Team: {{team.name}}</mat-card-title>
+<mat-card-subtitle>Creata da: {{vm.idCreatore}}</mat-card-subtitle>
+<mat-card-content><h3>Status: {{vm.status}}</h3>
+  <h3>GbDisk: {{vm.gbram}}</h3>
+  <h3>GbRam: {{vm.gbdisk}}</h3>
+  <h3>Vcpu: {{vm.vcpu}}</h3>
+  <img  width="90%" height="90%" [src]="vm.screenVm"></mat-card-content>
+</mat-card>

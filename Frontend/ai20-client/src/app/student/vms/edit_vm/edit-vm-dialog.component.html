@@ -1,0 +1,42 @@
+<p mat-dialog-title><mat-icon>edit</mat-icon>&nbsp;Modifica VM</p>
+
+<mat-dialog-content class="mat-login">
+    <form #vmform class="addvmform" autocomplete="off" [formGroup]="form">
+    <section>
+    <p>Specifica i parametri della Virtual Machine.</p>
+
+      <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Id:</mat-label>
+          <input matInput value={{vm.id}} disabled>
+      </mat-form-field>
+          
+      <mat-form-field appearance="fill">
+          <mat-label>vCPU</mat-label>
+          <input matInput type="number" formControlName="vcpu" placeholder="Ex. 1"  min="0">
+          <mat-error *ngIf="vcpu.invalid"> {{getErrorvcpuMessage()}} </mat-error>
+          <span matSuffix></span>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Disk</mat-label>
+        <input matInput type="number" formControlName="gbdisk" placeholder="Ex. 2"  min="0">
+        <mat-error *ngIf="gbdisk.invalid"> {{getErrorgbdiskMessage()}} </mat-error>
+        <span matSuffix>GB</span>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>RAM</mat-label>
+        <input matInput type="number" formControlName="gbram" placeholder="Ex. 2"  min="0">
+        <mat-error *ngIf="gbram.invalid"> {{getErrorgbramMessage()}} </mat-error>
+        <span matSuffix>GB</span>
+      </mat-form-field>
+
+        <br>
+        <br>
+        <button mat-raised-button color="primary" (click)="modifyVM()">Conferma</button>
+        <button mat-raised-button style="margin-left: 20px;" color="warn" mat-dialog-close>Annulla</button>
+        <br>            
+        <br>    
+    </section>
+  </form>
+</mat-dialog-content>

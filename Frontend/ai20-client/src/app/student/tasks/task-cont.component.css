@@ -1,0 +1,132 @@
+
+/*@@@@@@@@@@@@@@@@@@@ card style*/
+ .example-card {
+    max-width: 15%;
+    margin: 1%;
+  }
+  
+  .division{
+    display: flex;  /*   flex o table */
+  }
+
+  mat-card.example-card{
+    float: left;
+    width: 14%;
+    min-width: 200px;
+  }
+
+  
+  mat-card.example-card:hover{
+    -webkit-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    transform: scale(1.05);
+    cursor: pointer;
+    background-color: #e4e4e4;
+  }
+
+
+
+  #inner1 {
+    float:left;
+    display: contents;
+ }
+ 
+ #inner2{
+    float:left; 
+    clear: left;
+    display: contents;
+ }
+
+ /*@@@@@@@@@@@@@@@@@@@*/
+
+
+/* lista elaborati */
+
+table {
+  width: 100%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+
+
+  .addgroupform {
+    margin-top: 8px;
+    margin-left: 12px;
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .groupform-width {
+    width: 100%;
+  }
+
+  table {
+    background: rgb(255, 255, 255);
+    
+  } 
+
+ 
+
+  .deleteButton {
+    margin-bottom: 1%;
+    cursor: pointer;
+  }
+  
+
+  .button-row button{
+    margin-top: 8px;
+    font-size: 16px;
+    margin-left: 12px;     
+    }
+
+
+  mat-form-field {
+      margin-right: 14px;
+   }
+
+  
+  .mat-title{
+    color: rgb(79, 79, 94);
+}
+
+.example-button-row {
+  display: table-cell;
+} 
+
+
+.mat-list-icon {
+  color: rgba(10, 80, 233, 0.753);
+  
+}
+
+
+
+aside{
+  margin: 1%;
+  width: 35%;
+}
+
+
+.addButton {
+  /* position: absolute; */
+  /* margin-left: 10px; */
+/*   margin-top: 16px; */  
+  position: relative;
+  cursor: pointer;
+  margin-left: 60%;
+}
+
+
+
+
+.container{
+  padding: 6px;
+}
+
+  /*@@@@@@@@@@@@@@@@@@@*/
+
+  /*style="width: fit-content;border: ridge;border-color: dimgrey;"*/

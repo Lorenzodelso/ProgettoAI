@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>Registrazione nel portale</h2>
+<mat-dialog-content>
+    <form #registrationform class="registrationform" autocomplete="off" [formGroup]="form">
+        <section>
+
+                <mat-radio-group formControlName="role" requiredaria-label="Studente o Professore?">
+                    <mat-radio-button value="ROLE_STUDENT">Studente</mat-radio-button>
+                    <mat-radio-button value="ROLE_PROFESSOR">Professore</mat-radio-button>
+                  </mat-radio-group>
+
+                <br>
+                <br>
+
+            
+
+            <mat-form-field appearance="fill">
+                <mat-label>Nome</mat-label>  
+                <input matInput type="text" placeholder="Il tuo nome" formControlName="nome" required>
+                </mat-form-field>
+                <br>
+                <br>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Cognome</mat-label>  
+                <input matInput type="text" placeholder="Il tuo cognome" formControlName="cognome" required>
+            </mat-form-field>
+                <br>
+                <br>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Matricola</mat-label>  
+                    <input matInput type="text" placeholder="Ex. s123456" formControlName="matricola" required>
+                    </mat-form-field>
+                    <br>
+                    <br>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Email</mat-label>  
+                        <input matInput type="email" placeholder="Ex. namesurname@mail.com" formControlName="email" required>
+                        <mat-error *ngIf="email.invalid"> {{getErrorEmailMessage()}} </mat-error>
+                        </mat-form-field>
+                        <br>
+                        <br>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>  
+                <input matInput type="password" placeholder="Ex. mypassword" formControlName="password" required>
+                <mat-error *ngIf="password.invalid"> {{getErrorPasswordMessage()}} </mat-error>
+            </mat-form-field>
+            <br>
+            <br>
+                <button mat-raised-button color="primary" (click)="registration()">Registrati</button>
+                <button mat-raised-button style="margin-left: 20px;" color="warn" mat-dialog-close>Cancel</button>
+                <br>
+                <mat-error style="padding-top: 15px;"> {{myError}} </mat-error>
+            <br>
+
+
+        </section>
+    </form>
+</mat-dialog-content>
+

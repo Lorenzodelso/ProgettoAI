@@ -1,0 +1,66 @@
+<div class="container" *ngIf="inAteamObs | async ; else elseBlock">
+
+
+<div class="division">
+<mat-card style="text-align: center;">
+    <mat-divider [vertical]="true"></mat-divider>
+    <mat-divider [vertical]="true"></mat-divider>
+    <mat-card-title>
+        Le mie virtual machines
+    </mat-card-title>
+    <mat-divider></mat-divider>
+    <br>
+<mat-divider [vertical]="true"></mat-divider>
+<mat-divider [vertical]="true"></mat-divider>
+<mat-card-content>
+    <section>Interagisci con le virtual machines attraverso i bottoni. Potrai accendere/spegnere le vms, modificare gli owners ed i parametri ed accedere alla vm.</section>
+    <section>
+      <button mat-raised-button (click)="openDialogAdd()" class="addvm" color="warn"><mat-icon>add</mat-icon>&nbsp;New Vm</button> 
+    </section>
+</mat-card-content>
+</mat-card>
+
+<mat-card class="example-card" *ngFor="let virt of dataSource">
+  <mat-card-header>
+    <div mat-card-avatar><img mat-card-image src="https://i.ibb.co/6F8pBw8/Cattura.png" alt="Photo of a VM"></div>
+    <mat-card-title>VM #{{virt.id}}</mat-card-title>
+    <mat-card-subtitle> 
+      <p *ngIf="virt.status==='Accesa'; else elsestatus">Stato: {{virt.status}}</p>
+    <ng-template #elsestatus><p>Stato: {{virt.status}}</p></ng-template>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>vcpu:&nbsp;  {{virt.vcpu}} </p>
+    <p>GBDisk:&nbsp; {{virt.gbdisk}} GB</p>
+    <p>GBRam:&nbsp;{{virt.gbram}} GB</p>
+     <p *ngIf="virt.isOwner; else elseBlock">(You're owner of this VM)</p> 
+
+    <ng-template #elseBlock>
+      <p>(You're NOT owner of this VM)</p>
+    </ng-template>
+  </mat-card-content>
+  <mat-card-actions *ngIf="virt.isOwner">
+    <button mat-mini-fab *ngIf="virt.status==='Spenta'" class="action" color="primary" title="Avvia" (click)="changeVMstatus(virt.id)"><mat-icon>play_arrow</mat-icon></button>
+    <button mat-mini-fab *ngIf="virt.status==='Accesa'" class="action" color="primary" title="Stop" (click)="changeVMstatus(virt.id)"><mat-icon>stop</mat-icon></button>
+    <button mat-mini-fab class="action" color="primary" (click)="deleteVM(virt.id)" title="Elimina" ><mat-icon>delete</mat-icon></button>
+    <button mat-mini-fab *ngIf="virt.status==='Spenta'" class="action" color="primary" title="Modifica" (click)="openDialogEdit(virt.id)"><mat-icon>edit</mat-icon></button>
+    <button mat-mini-fab *ngIf="virt.status==='Spenta'" class="action" color="primary" title="Modifica Owners" (click)="openDialogOwners(virt.id)"><mat-icon>group</mat-icon></button>
+    <button mat-mini-fab *ngIf="virt.status==='Accesa'" class="action" color="primary" title="Collegati" (click)="connect(virt.screenVm)"><mat-icon>open_in_new</mat-icon></button>
+
+  </mat-card-actions>
+</mat-card> 
+
+</div>
+</div>
+
+<ng-template #elseBlock>
+
+  <div style="text-align: center;"> 
+    <h1>
+    <br>Benvenuto Studente!<br>
+    Questa è la pagina del corso di {{coursename}}.
+    </h1>
+    <h3>Devi prima appartenere ad un gruppo per visualizzare questa tab del corso.</h3>
+    </div>
+
+</ng-template>

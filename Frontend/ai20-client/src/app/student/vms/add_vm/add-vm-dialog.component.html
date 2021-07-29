@@ -1,0 +1,50 @@
+<p mat-dialog-title><mat-icon>create</mat-icon>&nbsp;Aggiungi una nuova VM</p>
+
+<mat-dialog-content class="mat-login">
+    <form #vmform class="addvmform" autocomplete="off" [formGroup]="form" enctype="multipart/form-data">
+    <section>
+    <p>Specifica i parametri della nuova Virtual Machine.</p>
+<mat-divider></mat-divider>
+<mat-divider></mat-divider>
+<mat-divider></mat-divider>
+
+
+    <br>
+    <div class="form-field">
+      <label class="text-white">Carica immagine</label><br>
+      <input type="file" id="customFile" formControlName="testo" (change)="selectFile($event)">
+      <mat-error *ngIf="testo.invalid"> {{getErrorimgMessage()}} </mat-error>
+    </div>
+    <br>
+    
+       
+      <mat-form-field appearance="fill">
+          <mat-label>vCPU</mat-label>
+          <input matInput type="number" formControlName="vcpu" placeholder="Ex. 2"  min="1">
+          <mat-error *ngIf="vcpu.invalid"> {{getErrorvcpuMessage()}} </mat-error>
+          <span matSuffix></span>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Disk</mat-label>
+        <input matInput type="number" formControlName="gbdisk" placeholder="Ex. 2"  min="1">
+        <mat-error *ngIf="gbdisk.invalid"> {{getErrorgbdiskMessage()}} </mat-error>
+        <span matSuffix>GB</span>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>RAM</mat-label>
+        <input matInput type="number" formControlName="gbram" placeholder="Ex. 2"  min="1">
+        <mat-error *ngIf="gbram.invalid"> {{getErrorgbramMessage()}} </mat-error>
+        <span matSuffix>GB</span>
+      </mat-form-field>
+
+        <br>
+        <br>
+        <button mat-raised-button color="primary" (click)="addVM()">Conferma</button>
+        <button mat-raised-button style="margin-left: 20px;" color="warn" mat-dialog-close>Annulla</button>
+        <br>            
+        <br>    
+    </section>
+  </form>
+</mat-dialog-content>

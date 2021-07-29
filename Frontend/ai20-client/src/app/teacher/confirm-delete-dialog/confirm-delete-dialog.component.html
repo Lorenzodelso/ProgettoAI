@@ -1,0 +1,17 @@
+<div mat-dialog-container>
+    <mat-toolbar color="primary" class="mat-elevation-z2" style="text-align: center;">
+      <mat-card-header>Avviso</mat-card-header>
+    </mat-toolbar>
+    <br>
+    <div class="info" >
+      <p>{{data}}</p>
+      <p>Premendo 'elimina' cancellati tutti i dati relativi a quel corso ( essay, task, etc....)</p>
+    </div> <br> <br>
+    <div style="padding: 5px;float:right">
+        <button mat-button color="primary" mat-dialog-close>Annulla</button>
+        <button mat-button color="warn" (click)="confirm_delete();">Elimina</button>
+
+      
+    </div>
+    
+  </div>

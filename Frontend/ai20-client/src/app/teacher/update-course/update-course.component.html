@@ -1,0 +1,68 @@
+
+<div class="container"><div class="form-group">
+  <mat-card>
+    <mat-card-title>Modifica corso: {{course_name}}</mat-card-title>
+    <mat-card-subtitle>Inserisci le modifiche che vuoi apportare. Non è possiible modificare il nome del corso</mat-card-subtitle>
+    <br>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <section>
+        
+            
+        <mat-form-field appearance="fill">
+            <mat-label>Nome corso</mat-label>
+            <input matInput formControlName="nome_corso"readonly>
+            <span matSuffix></span>
+        </mat-form-field>
+        <br>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>Numero minimo componenti gruppo</mat-label>
+          <input matInput type="number" placeholder="Ex. 1" formControlName="min">
+          <span matSuffix></span>
+      </mat-form-field>
+      <br>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Numero massimo componenti gruppo</mat-label>
+        <input matInput type="number" placeholder="Ex. 10" formControlName="max">
+        <span matSuffix></span>
+    </mat-form-field>
+    <br>
+  
+  
+    <mat-form-field appearance="fill">
+      <mat-label>Modello Virtual Machine CPU</mat-label>
+      <input matInput type="number"  placeholder="Ex. 1" formControlName="cpu">
+      <span matSuffix></span>
+  </mat-form-field>
+  <br>
+  
+  <mat-form-field appearance="fill">
+    <mat-label>Modello Virtual Machine GB Disk</mat-label>
+    <input matInput type="number" placeholder="Ex. 100"  formControlName="gbdisk">
+    <span matSuffix></span>
+  </mat-form-field>
+  <br>
+  
+  <mat-form-field appearance="fill">
+    <mat-label>Modello Virtual Machine GB Ram</mat-label>
+    <input matInput type="number"  placeholder="Ex. 2" formControlName="gbram">
+    <span matSuffix></span>
+  </mat-form-field>
+  <br>
+  
+  <div style="text-align: center;">
+  <h2 style="font-weight:bold;text-align:center">Abilita corso:</h2>
+  <mat-checkbox class="mat-checkbox-enabled" formControlName="enabled"></mat-checkbox>
+  </div>
+        <br>
+  
+          <h2 style="font-weight:bold;text-align:center">Seleziona altri docenti:</h2>
+          <br>
+        <app-teacher-cont (addEmitter_professors)="scelta_professori($event)" [all_prof]="all_prof" ></app-teacher-cont>
+         <br>            
+        <br>    
+    </section>
+  </form>
+  </mat-card-content></mat-card></div></div>
